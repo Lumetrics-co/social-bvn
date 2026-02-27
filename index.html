@@ -1,877 +1,1237 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CaptionForge — Social Media Content Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0c0c0e;
-    --surface: #131316;
-    --surface2: #1a1a1f;
-    --border: #2a2a32;
-    --border-light: #3a3a44;
-    --text: #e8e8f0;
-    --text-muted: #7a7a8a;
-    --text-dim: #4a4a5a;
-    --accent: #e8ff6b;
-    --accent-dim: rgba(232, 255, 107, 0.12);
-    --accent-glow: rgba(232, 255, 107, 0.08);
-
-    --fb: #4a9eff;
-    --ig: #f77737;
-    --tw: #1d9bf0;
-    --wa: #25d366;
-    --li: #0a66c2;
-    --yt: #ff0000;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Manrope', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* HEADER */
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 24px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: rgba(12, 12, 14, 0.92);
-    backdrop-filter: blur(12px);
-    z-index: 100;
-  }
-
-  .logo {
-    font-family: 'Fraunces', serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.5px;
-  }
-
-  .logo span { color: var(--accent); }
-
-  .header-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .save-indicator {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-    transition: color 0.3s;
-  }
-
-  .save-indicator.saved { color: var(--accent); }
-  .save-indicator.saving { color: var(--text-muted); }
-
-  .save-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    transition: background 0.3s;
-  }
-
-  .save-indicator.saved .save-dot {
-    box-shadow: 0 0 6px var(--accent);
-  }
-
-  .btn-clear-saved {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: color 0.15s, border-color 0.15s;
-  }
-
-  .btn-clear-saved:hover { color: #ff6b6b; border-color: #ff6b6b; }
-
-  .saved-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--accent);
-    background: var(--accent-dim);
-    border: 1px solid rgba(232,255,107,0.2);
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-left: 8px;
-    vertical-align: middle;
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-
-  .saved-badge.visible { opacity: 1; }
-
-  /* LAYOUT */
-  .main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 48px 40px 80px;
-  }
-
-  .hero {
-    margin-bottom: 52px;
-  }
-
-  .hero h1 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--text);
-    margin-bottom: 12px;
-    letter-spacing: -1px;
-  }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .hero p {
-    color: var(--text-muted);
-    font-size: 15px;
-    max-width: 500px;
-  }
-
-  /* SECTIONS */
-  .section {
-    margin-bottom: 36px;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-  }
-
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* INPUTS */
-  label {
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-
-  textarea, input[type="text"] {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Manrope', sans-serif;
-    font-size: 13px;
-    line-height: 1.6;
-    padding: 12px 14px;
-    resize: vertical;
-    transition: border-color 0.2s, background 0.2s;
-    outline: none;
-  }
-
-  textarea:focus, input[type="text"]:focus {
-    border-color: var(--border-light);
-    background: var(--surface2);
-  }
-
-  textarea { min-height: 90px; }
-  textarea.short { min-height: 60px; }
-  textarea.tall { min-height: 120px; }
-
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-
-  /* PLATFORM CARDS */
-  .platforms-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  @media (max-width: 900px) {
-    .platforms-grid { grid-template-columns: 1fr 1fr; }
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 560px) {
-    .platforms-grid { grid-template-columns: 1fr; }
-    header { padding: 16px 20px; }
-    .main { padding: 32px 20px 60px; }
-  }
-
-  .platform-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    transition: border-color 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .platform-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--p-color, var(--border));
-    opacity: 0.8;
-  }
-
-  .platform-card:hover { border-color: var(--border-light); }
-
-  .platform-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .platform-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    background: var(--p-bg, var(--surface2));
-  }
-
-  .platform-name {
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--text);
-  }
-
-  .field-group { margin-bottom: 14px; }
-  .field-group:last-child { margin-bottom: 0; }
-
-  /* GENERATE BUTTON */
-  .generate-wrap {
-    margin: 40px 0 52px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .btn-generate {
-    background: var(--accent);
-    color: #0c0c0e;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 14px 36px;
-    cursor: pointer;
-    letter-spacing: -0.2px;
-    transition: opacity 0.15s, transform 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-generate:hover { opacity: 0.88; transform: translateY(-1px); }
-  .btn-generate:active { transform: translateY(0); }
-
-  .btn-clear {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-family: 'Manrope', sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    padding: 14px 24px;
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
-  }
-
-  .btn-clear:hover { color: var(--text); border-color: var(--border-light); }
-
-  /* OUTPUT */
-  .output-section {
-    display: none;
-  }
-
-  .output-section.visible { display: block; }
-
-  .output-section h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 28px;
-    font-weight: 300;
-    letter-spacing: -0.5px;
-    margin-bottom: 28px;
-    color: var(--text);
-  }
-
-  .output-section h2 span {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .outputs-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  @media (max-width: 768px) {
-    .outputs-grid { grid-template-columns: 1fr; }
-  }
-
-  .output-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .output-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-  }
-
-  .output-card-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 13px;
-  }
-
-  .output-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--p-color);
-  }
-
-  .btn-copy {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-copy:hover { color: var(--text); border-color: var(--border-light); background: var(--surface2); }
-  .btn-copy.copied { color: var(--accent); border-color: var(--accent); }
-
-  .output-body {
-    padding: 16px;
-  }
-
-  .output-text {
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text);
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .char-count {
-    margin-top: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--text-dim);
-    text-align: right;
-  }
-
-  /* DIVIDER */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 40px 0;
-  }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: var(--surface2);
-    border: 1px solid var(--border-light);
-    border-left: 3px solid var(--accent);
-    color: var(--text);
-    padding: 12px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    transform: translateY(80px);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .toast.show { transform: translateY(0); opacity: 1; }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo">Caption<span>Forge</span></div>
-  <div class="header-right">
-    <div class="save-indicator" id="saveIndicator">
-      <div class="save-dot"></div>
-      <span id="saveLabel">not saved</span>
-    </div>
-    <button class="btn-clear-saved" onclick="clearSavedData()" title="Clear all saved boilerplate & tags from browser">CLEAR SAVED</button>
-    <div class="header-tag">v1.0 · 6 Platforms</div>
-  </div>
-</header>
-
-<div class="main">
-
-  <div class="hero">
-    <h1>Generate content<br>for <em>every</em> platform.</h1>
-    <p>Fill in your boilerplate, platform tags, and descriptions — then generate perfectly formatted captions in one click.</p>
-  </div>
-
-  <!-- BOILERPLATE -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-label">01 · Boilerplate</span>
-      <div class="section-line"></div>
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);white-space:nowrap;">
-        💾 auto-saved in browser
-      </span>
-    </div>
-    <div class="field-group">
-      <label>Mandatory Boilerplate Text</label>
-      <textarea id="boilerplate" class="tall" placeholder="e.g. All bookings via link in bio. For inquiries contact hello@brand.com | © 2025 Brand Name"></textarea>
-    </div>
-  </div>
-
-  <!-- PLATFORM TAGS -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-label">02 · Platform Tags & Hashtags</span>
-      <div class="section-line"></div>
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);white-space:nowrap;">
-        💾 auto-saved in browser
-      </span>
-    </div>
-    <div class="platforms-grid">
-
-      <!-- Facebook -->
-      <div class="platform-card" style="--p-color: var(--fb); --p-bg: rgba(74,158,255,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">📘</div>
-          <span class="platform-name">Facebook</span>
-        </div>
-        <div class="field-group">
-          <label>Tags & Hashtags</label>
-          <textarea class="short" id="tags_fb" placeholder="#socialmedia #facebook @brandpage"></textarea>
-        </div>
-      </div>
-
-      <!-- Instagram -->
-      <div class="platform-card" style="--p-color: var(--ig); --p-bg: rgba(247,119,55,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">📸</div>
-          <span class="platform-name">Instagram</span>
-        </div>
-        <div class="field-group">
-          <label>Tags & Hashtags</label>
-          <textarea class="short" id="tags_ig" placeholder="#instagood #explore @mention"></textarea>
-        </div>
-      </div>
-
-      <!-- Twitter / X -->
-      <div class="platform-card" style="--p-color: var(--tw); --p-bg: rgba(29,155,240,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">🐦</div>
-          <span class="platform-name">Twitter / X</span>
-        </div>
-        <div class="field-group">
-          <label>Tags & Hashtags</label>
-          <textarea class="short" id="tags_tw" placeholder="#trending @handle"></textarea>
-        </div>
-      </div>
-
-      <!-- WhatsApp Channel -->
-      <div class="platform-card" style="--p-color: var(--wa); --p-bg: rgba(37,211,102,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">💬</div>
-          <span class="platform-name">WhatsApp Channel</span>
-        </div>
-        <div class="field-group">
-          <label>Tags & Hashtags</label>
-          <textarea class="short" id="tags_wa" placeholder="#updates #channel"></textarea>
-        </div>
-      </div>
-
-      <!-- LinkedIn -->
-      <div class="platform-card" style="--p-color: var(--li); --p-bg: rgba(10,102,194,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">💼</div>
-          <span class="platform-name">LinkedIn</span>
-        </div>
-        <div class="field-group">
-          <label>Tags & Hashtags</label>
-          <textarea class="short" id="tags_li" placeholder="#professional #networking #industry"></textarea>
-        </div>
-      </div>
-
-      <!-- YouTube -->
-      <div class="platform-card" style="--p-color: var(--yt); --p-bg: rgba(255,0,0,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">▶️</div>
-          <span class="platform-name">YouTube</span>
-        </div>
-        <div class="field-group">
-          <label>Tags & Hashtags</label>
-          <textarea class="short" id="tags_yt" placeholder="#youtube #shorts #subscribe"></textarea>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- PLATFORM DESCRIPTIONS -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-label">03 · Platform Content</span>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="platforms-grid">
-
-      <!-- Facebook -->
-      <div class="platform-card" style="--p-color: var(--fb); --p-bg: rgba(74,158,255,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">📘</div>
-          <span class="platform-name">Facebook</span>
-        </div>
-        <div class="field-group">
-          <label>Post Description</label>
-          <textarea id="desc_fb" placeholder="Engaging Facebook post copy. Great for longer narratives, stories, and community engagement..."></textarea>
-        </div>
-      </div>
-
-      <!-- Instagram -->
-      <div class="platform-card" style="--p-color: var(--ig); --p-bg: rgba(247,119,55,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">📸</div>
-          <span class="platform-name">Instagram</span>
-        </div>
-        <div class="field-group">
-          <label>Caption</label>
-          <textarea id="desc_ig" placeholder="Punchy, visual-first caption. Lead with a hook, build emotion..."></textarea>
-        </div>
-      </div>
-
-      <!-- Twitter -->
-      <div class="platform-card" style="--p-color: var(--tw); --p-bg: rgba(29,155,240,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">🐦</div>
-          <span class="platform-name">Twitter / X</span>
-        </div>
-        <div class="field-group">
-          <label>Tweet (keep it concise!)</label>
-          <textarea id="desc_tw" placeholder="Short, punchy, scroll-stopping. Max 280 chars with tags..."></textarea>
-        </div>
-      </div>
-
-      <!-- WhatsApp -->
-      <div class="platform-card" style="--p-color: var(--wa); --p-bg: rgba(37,211,102,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">💬</div>
-          <span class="platform-name">WhatsApp Channel</span>
-        </div>
-        <div class="field-group">
-          <label>Channel Message</label>
-          <textarea id="desc_wa" placeholder="Clear, conversational update. Like texting a friend but at scale..."></textarea>
-        </div>
-      </div>
-
-      <!-- LinkedIn -->
-      <div class="platform-card" style="--p-color: var(--li); --p-bg: rgba(10,102,194,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">💼</div>
-          <span class="platform-name">LinkedIn</span>
-        </div>
-        <div class="field-group">
-          <label>Post Description</label>
-          <textarea id="desc_li" placeholder="Professional tone, insight-driven. Opens with a strong hook, ends with a call to action..."></textarea>
-        </div>
-      </div>
-
-      <!-- YouTube -->
-      <div class="platform-card" style="--p-color: var(--yt); --p-bg: rgba(255,0,0,0.1)">
-        <div class="platform-title">
-          <div class="platform-icon">▶️</div>
-          <span class="platform-name">YouTube</span>
-        </div>
-        <div class="field-group">
-          <label>Video Title</label>
-          <input type="text" id="title_yt" placeholder="Compelling, SEO-friendly title...">
-        </div>
-        <div class="field-group" style="margin-top:12px">
-          <label>Video Description</label>
-          <textarea class="tall" id="desc_yt" placeholder="Full description with timestamps, links, and detailed info about the video..."></textarea>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- GENERATE -->
-  <div class="generate-wrap">
-    <button class="btn-generate" onclick="generateContent()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 3l14 9-14 9V3z"/></svg>
-      Generate Content
-    </button>
-    <button class="btn-clear" onclick="clearAll()">Clear All</button>
-  </div>
-
-  <!-- OUTPUT -->
-  <div class="output-section" id="outputSection">
-    <div class="section-header">
-      <span class="section-label">Generated Output</span>
-      <div class="section-line"></div>
-    </div>
-    <h2>Your <span>captions</span> are ready.</h2>
-    <div class="outputs-grid" id="outputsGrid"></div>
-  </div>
-
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-  Copied to clipboard!
-</div>
-
-<script>
-const platforms = [
-  { id: 'fb', name: 'Facebook',        emoji: '📘', color: '#4a9eff', hasTitle: false },
-  { id: 'ig', name: 'Instagram',       emoji: '📸', color: '#f77737', hasTitle: false },
-  { id: 'tw', name: 'Twitter / X',     emoji: '🐦', color: '#1d9bf0', hasTitle: false },
-  { id: 'wa', name: 'WhatsApp',        emoji: '💬', color: '#25d366', hasTitle: false },
-  { id: 'li', name: 'LinkedIn',        emoji: '💼', color: '#0a66c2', hasTitle: false },
-  { id: 'yt', name: 'YouTube',         emoji: '▶️', color: '#ff0000', hasTitle: true  },
-];
-
-// Fields that get persisted (boilerplate + all tags)
-const PERSISTENT_FIELDS = [
-  'boilerplate',
-  ...platforms.map(p => 'tags_' + p.id)
-];
-
-const STORAGE_KEY = 'captionforge_persistent';
-
-// ── SAVE / LOAD ──────────────────────────────────────────────
-
-function saveToStorage() {
-  const data = {};
-  PERSISTENT_FIELDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) data[id] = el.value;
-  });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  setSaveStatus('saved');
-}
-
-function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    let hasData = false;
-    PERSISTENT_FIELDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (el && data[id] !== undefined) {
-        el.value = data[id];
-        if (data[id]) hasData = true;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CaptionForge — Social Media Content Generator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Manrope:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    });
-    if (hasData) setSaveStatus('saved');
-  } catch (e) {
-    console.warn('Could not load saved data:', e);
-  }
-}
 
-function clearSavedData() {
-  if (!confirm('Clear all saved boilerplate & tags from your browser? This cannot be undone.')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  PERSISTENT_FIELDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  setSaveStatus('cleared');
-}
+      :root {
+        --bg: #0c0c0e;
+        --surface: #131316;
+        --surface2: #1a1a1f;
+        --border: #2a2a32;
+        --border-light: #3a3a44;
+        --text: #e8e8f0;
+        --text-muted: #7a7a8a;
+        --text-dim: #4a4a5a;
+        --accent: #e8ff6b;
+        --accent-dim: rgba(232, 255, 107, 0.12);
+        --accent-glow: rgba(232, 255, 107, 0.08);
 
-// ── SAVE STATUS INDICATOR ────────────────────────────────────
+        --fb: #4a9eff;
+        --ig: #f77737;
+        --tw: #1d9bf0;
+        --wa: #25d366;
+        --li: #0a66c2;
+        --yt: #ff0000;
+      }
 
-let saveTimer = null;
-let statusResetTimer = null;
+      html {
+        scroll-behavior: smooth;
+      }
 
-function setSaveStatus(state) {
-  const indicator = document.getElementById('saveIndicator');
-  const label = document.getElementById('saveLabel');
-  indicator.className = 'save-indicator';
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Manrope", sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
 
-  if (state === 'saving') {
-    indicator.classList.add('saving');
-    label.textContent = 'saving…';
-  } else if (state === 'saved') {
-    indicator.classList.add('saved');
-    label.textContent = 'auto-saved';
-    clearTimeout(statusResetTimer);
-    statusResetTimer = setTimeout(() => {
-      indicator.className = 'save-indicator';
-      label.textContent = 'saved ✓';
-    }, 2000);
-  } else if (state === 'cleared') {
-    label.textContent = 'cleared';
-    statusResetTimer = setTimeout(() => {
-      indicator.className = 'save-indicator';
-      label.textContent = 'not saved';
-    }, 2500);
-  }
-}
+      /* HEADER */
+      header {
+        border-bottom: 1px solid var(--border);
+        padding: 24px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        background: rgba(12, 12, 14, 0.92);
+        backdrop-filter: blur(12px);
+        z-index: 100;
+      }
 
-// Debounced auto-save on input
-function onPersistentFieldInput() {
-  setSaveStatus('saving');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveToStorage, 800);
-}
+      .logo {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.5px;
+      }
 
-// Attach listeners to all persistent fields
-function attachSaveListeners() {
-  PERSISTENT_FIELDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', onPersistentFieldInput);
-  });
-}
+      .logo span {
+        color: var(--accent);
+      }
 
-// ── CAPTION GENERATION ──────────────────────────────────────
+      .header-tag {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
 
-function val(id) {
-  const el = document.getElementById(id);
-  return el ? el.value.trim() : '';
-}
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-function buildCaption(platform) {
-  const boilerplate = val('boilerplate');
-  const tags = val('tags_' + platform.id);
-  const desc = val('desc_' + platform.id);
-  const title = platform.hasTitle ? val('title_' + platform.id) : '';
+      .save-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text-dim);
+        transition: color 0.3s;
+      }
 
-  let parts = [];
+      .save-indicator.saved {
+        color: var(--accent);
+      }
+      .save-indicator.saving {
+        color: var(--text-muted);
+      }
 
-  if (platform.hasTitle && title) {
-    parts.push('🎬 ' + title);
-    parts.push('');
-  }
+      .save-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        transition: background 0.3s;
+      }
 
-  if (desc) parts.push(desc);
+      .save-indicator.saved .save-dot {
+        box-shadow: 0 0 6px var(--accent);
+      }
 
-  if (boilerplate) {
-    if (parts.length) parts.push('');
-    parts.push('—');
-    parts.push(boilerplate);
-  }
+      .btn-clear-saved {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
 
-  if (tags) {
-    if (parts.length) parts.push('');
-    parts.push(tags);
-  }
+      .btn-clear-saved:hover {
+        color: #ff6b6b;
+        border-color: #ff6b6b;
+      }
 
-  return parts.join('\n');
-}
+      .saved-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--accent);
+        background: var(--accent-dim);
+        border: 1px solid rgba(232, 255, 107, 0.2);
+        padding: 2px 8px;
+        border-radius: 20px;
+        margin-left: 8px;
+        vertical-align: middle;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
 
-function generateContent() {
-  const outputSection = document.getElementById('outputSection');
-  const grid = document.getElementById('outputsGrid');
+      .saved-badge.visible {
+        opacity: 1;
+      }
 
-  grid.innerHTML = '';
+      /* LAYOUT */
+      .main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 48px 40px 80px;
+      }
 
-  platforms.forEach(p => {
-    const text = buildCaption(p);
-    const charCount = text.length;
+      .hero {
+        margin-bottom: 52px;
+      }
 
-    const card = document.createElement('div');
-    card.className = 'output-card';
-    card.innerHTML = `
+      .hero h1 {
+        font-family: "Fraunces", serif;
+        font-size: clamp(32px, 5vw, 52px);
+        font-weight: 300;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 12px;
+        letter-spacing: -1px;
+      }
+
+      .hero h1 em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      .hero p {
+        color: var(--text-muted);
+        font-size: 15px;
+        max-width: 500px;
+      }
+
+      /* SECTIONS */
+      .section {
+        margin-bottom: 36px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .section-label {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-muted);
+      }
+
+      .section-line {
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      /* INPUTS */
+      label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+
+      textarea,
+      input[type="text"] {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: "Manrope", sans-serif;
+        font-size: 13px;
+        line-height: 1.6;
+        padding: 12px 14px;
+        resize: vertical;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        outline: none;
+      }
+
+      textarea:focus,
+      input[type="text"]:focus {
+        border-color: var(--border-light);
+        background: var(--surface2);
+      }
+
+      textarea {
+        min-height: 90px;
+      }
+      textarea.short {
+        min-height: 60px;
+      }
+      textarea.tall {
+        min-height: 120px;
+      }
+
+      /* GRID */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      /* PLATFORM CARDS */
+      .platforms-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      @media (max-width: 900px) {
+        .platforms-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .platforms-grid {
+          grid-template-columns: 1fr;
+        }
+        header {
+          padding: 16px 20px;
+        }
+        .main {
+          padding: 32px 20px 60px;
+        }
+      }
+
+      .platform-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        transition: border-color 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .platform-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--p-color, var(--border));
+        opacity: 0.8;
+      }
+
+      .platform-card:hover {
+        border-color: var(--border-light);
+      }
+
+      .platform-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .platform-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        background: var(--p-bg, var(--surface2));
+      }
+
+      .platform-name {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--text);
+      }
+
+      .field-group {
+        margin-bottom: 14px;
+      }
+      .field-group:last-child {
+        margin-bottom: 0;
+      }
+
+      /* GENERATE BUTTON */
+      .generate-wrap {
+        margin: 40px 0 52px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .btn-generate {
+        background: var(--accent);
+        color: #0c0c0e;
+        border: none;
+        border-radius: 10px;
+        font-family: "Manrope", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        padding: 14px 36px;
+        cursor: pointer;
+        letter-spacing: -0.2px;
+        transition:
+          opacity 0.15s,
+          transform 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-generate:hover {
+        opacity: 0.88;
+        transform: translateY(-1px);
+      }
+      .btn-generate:active {
+        transform: translateY(0);
+      }
+
+      .btn-clear {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-family: "Manrope", sans-serif;
+        font-weight: 500;
+        font-size: 14px;
+        padding: 14px 24px;
+        cursor: pointer;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      .btn-clear:hover {
+        color: var(--text);
+        border-color: var(--border-light);
+      }
+
+      /* OUTPUT */
+      .output-section {
+        display: none;
+      }
+
+      .output-section.visible {
+        display: block;
+      }
+
+      .output-section h2 {
+        font-family: "Fraunces", serif;
+        font-size: 28px;
+        font-weight: 300;
+        letter-spacing: -0.5px;
+        margin-bottom: 28px;
+        color: var(--text);
+      }
+
+      .output-section h2 span {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      .outputs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      @media (max-width: 768px) {
+        .outputs-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .output-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .output-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface2);
+      }
+
+      .output-card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .output-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--p-color);
+      }
+
+      .btn-copy {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .btn-copy:hover {
+        color: var(--text);
+        border-color: var(--border-light);
+        background: var(--surface2);
+      }
+      .btn-copy.copied {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .output-body {
+        padding: 16px;
+      }
+
+      .output-text {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .char-count {
+        margin-top: 10px;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--text-dim);
+        text-align: right;
+      }
+
+      /* DIVIDER */
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 40px 0;
+      }
+
+      /* SAVE GENERATED BUTTON */
+      .save-generated-wrap {
+        margin-top: 24px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .btn-save-generated {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        font-family: "Manrope", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-save-generated:hover {
+        border-color: var(--accent);
+        background: var(--surface2);
+      }
+
+      .btn-save-generated.saved {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      /* TOAST */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: var(--surface2);
+        border: 1px solid var(--border-light);
+        border-left: 3px solid var(--accent);
+        color: var(--text);
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        transform: translateY(80px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* SCROLLBAR */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">Caption<span>Forge</span></div>
+      <div class="header-right">
+        <div class="save-indicator" id="saveIndicator">
+          <div class="save-dot"></div>
+          <span id="saveLabel">not saved</span>
+        </div>
+        <button
+          class="btn-clear-saved"
+          onclick="clearSavedData()"
+          title="Clear all saved boilerplate & tags from browser"
+        >
+          CLEAR SAVED
+        </button>
+        <div class="header-tag">v1.0 · 6 Platforms</div>
+      </div>
+    </header>
+
+    <div class="main">
+      <div class="hero">
+        <h1>Generate content<br />for <em>every</em> platform.</h1>
+        <p>
+          Fill in your boilerplate, platform tags, and descriptions — then
+          generate perfectly formatted captions in one click.
+        </p>
+      </div>
+
+      <!-- BOILERPLATE -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-label">01 · Boilerplate</span>
+          <div class="section-line"></div>
+          <span
+            style='font-family: "DM Mono", monospace; font-size: 10px; color: var(--text-dim); white-space: nowrap;'
+          >
+            💾 auto-saved to server
+          </span>
+        </div>
+        <div class="field-group">
+          <label>Mandatory Boilerplate Text</label>
+          <textarea
+            id="boilerplate"
+            class="tall"
+            placeholder="e.g. All bookings via link in bio. For inquiries contact hello@brand.com | © 2025 Brand Name"
+          ></textarea>
+        </div>
+      </div>
+
+          <!-- PLATFORM TAGS -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-label">02 · Platform Tags & Hashtags</span>
+          <div class="section-line"></div>
+          <span
+            style='font-family: "DM Mono", monospace; font-size: 10px; color: var(--text-dim); white-space: nowrap;'
+          >
+            💾 auto-saved to server
+          </span>
+        </div>
+        <div class="platforms-grid">
+          <!-- Facebook -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--fb); --p-bg: rgba(74, 158, 255, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">📘</div>
+              <span class="platform-name">Facebook</span>
+            </div>
+            <div class="field-group">
+              <label>Tags & Hashtags</label>
+              <textarea
+                class="short"
+                id="tags_fb"
+                placeholder="#socialmedia #facebook @brandpage"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Instagram -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--ig); --p-bg: rgba(247, 119, 55, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">📸</div>
+              <span class="platform-name">Instagram</span>
+            </div>
+            <div class="field-group">
+              <label>Tags & Hashtags</label>
+              <textarea
+                class="short"
+                id="tags_ig"
+                placeholder="#instagood #explore @mention"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Twitter / X -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--tw); --p-bg: rgba(29, 155, 240, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">🐦</div>
+              <span class="platform-name">Twitter / X</span>
+            </div>
+            <div class="field-group">
+              <label>Tags & Hashtags</label>
+              <textarea
+                class="short"
+                id="tags_tw"
+                placeholder="#trending @handle"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- WhatsApp Channel -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--wa); --p-bg: rgba(37, 211, 102, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">💬</div>
+              <span class="platform-name">WhatsApp Channel</span>
+            </div>
+            <div class="field-group">
+              <label>Tags & Hashtags</label>
+              <textarea
+                class="short"
+                id="tags_wa"
+                placeholder="#updates #channel"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- LinkedIn -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--li); --p-bg: rgba(10, 102, 194, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">💼</div>
+              <span class="platform-name">LinkedIn</span>
+            </div>
+            <div class="field-group">
+              <label>Tags & Hashtags</label>
+              <textarea
+                class="short"
+                id="tags_li"
+                placeholder="#professional #networking #industry"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- YouTube -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--yt); --p-bg: rgba(255, 0, 0, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">▶️</div>
+              <span class="platform-name">YouTube</span>
+            </div>
+            <div class="field-group">
+              <label>Tags & Hashtags</label>
+              <textarea
+                class="short"
+                id="tags_yt"
+                placeholder="#youtube #shorts #subscribe"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLATFORM DESCRIPTIONS -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-label">03 · Platform Content</span>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="platforms-grid">
+          <!-- Facebook -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--fb); --p-bg: rgba(74, 158, 255, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">📘</div>
+              <span class="platform-name">Facebook</span>
+            </div>
+            <div class="field-group">
+              <label>Post Description</label>
+              <textarea
+                id="desc_fb"
+                placeholder="Engaging Facebook post copy. Great for longer narratives, stories, and community engagement..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Instagram -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--ig); --p-bg: rgba(247, 119, 55, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">📸</div>
+              <span class="platform-name">Instagram</span>
+            </div>
+            <div class="field-group">
+              <label>Caption</label>
+              <textarea
+                id="desc_ig"
+                placeholder="Punchy, visual-first caption. Lead with a hook, build emotion..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Twitter -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--tw); --p-bg: rgba(29, 155, 240, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">🐦</div>
+              <span class="platform-name">Twitter / X</span>
+            </div>
+            <div class="field-group">
+              <label>Tweet (keep it concise!)</label>
+              <textarea
+                id="desc_tw"
+                placeholder="Short, punchy, scroll-stopping. Max 280 chars with tags..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- WhatsApp -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--wa); --p-bg: rgba(37, 211, 102, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">💬</div>
+              <span class="platform-name">WhatsApp Channel</span>
+            </div>
+            <div class="field-group">
+              <label>Channel Message</label>
+              <textarea
+                id="desc_wa"
+                placeholder="Clear, conversational update. Like texting a friend but at scale..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- LinkedIn -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--li); --p-bg: rgba(10, 102, 194, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">💼</div>
+              <span class="platform-name">LinkedIn</span>
+            </div>
+            <div class="field-group">
+              <label>Post Description</label>
+              <textarea
+                id="desc_li"
+                placeholder="Professional tone, insight-driven. Opens with a strong hook, ends with a call to action..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- YouTube -->
+          <div
+            class="platform-card"
+            style="--p-color: var(--yt); --p-bg: rgba(255, 0, 0, 0.1)"
+          >
+            <div class="platform-title">
+              <div class="platform-icon">▶️</div>
+              <span class="platform-name">YouTube</span>
+            </div>
+            <div class="field-group">
+              <label>Video Title</label>
+              <input
+                type="text"
+                id="title_yt"
+                placeholder="Compelling, SEO-friendly title..."
+              />
+            </div>
+            <div class="field-group" style="margin-top: 12px">
+              <label>Video Description</label>
+              <textarea
+                class="tall"
+                id="desc_yt"
+                placeholder="Full description with timestamps, links, and detailed info about the video..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENERATE -->
+      <div class="generate-wrap">
+        <button class="btn-generate" onclick="generateContent()">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M5 3l14 9-14 9V3z" />
+          </svg>
+          Generate Content
+        </button>
+        <button class="btn-clear" onclick="clearAll()">Clear All</button>
+      </div>
+
+      <!-- OUTPUT -->
+      <div class="output-section" id="outputSection">
+        <div class="section-header">
+          <span class="section-label">Generated Output</span>
+          <div class="section-line"></div>
+        </div>
+        <h2>Your <span>captions</span> are ready.</h2>
+        <div class="outputs-grid" id="outputsGrid"></div>
+        
+        <!-- SAVE GENERATED BUTTON -->
+        <div class="save-generated-wrap">
+          <button class="btn-save-generated" id="btnSaveGenerated" onclick="saveGeneratedContent()">
+            💾 SAVE GENERATED CONTENT TO DATABASE
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+      >
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      Copied to clipboard!
+    </div>
+
+    <script>
+      const platforms = [
+        {
+          id: "fb",
+          name: "Facebook",
+          emoji: "📘",
+          color: "#4a9eff",
+          hasTitle: false,
+        },
+        {
+          id: "ig",
+          name: "Instagram",
+          emoji: "📸",
+          color: "#f77737",
+          hasTitle: false,
+        },
+        {
+          id: "tw",
+          name: "Twitter / X",
+          emoji: "🐦",
+          color: "#1d9bf0",
+          hasTitle: false,
+        },
+        {
+          id: "wa",
+          name: "WhatsApp",
+          emoji: "💬",
+          color: "#25d366",
+          hasTitle: false,
+        },
+        {
+          id: "li",
+          name: "LinkedIn",
+          emoji: "💼",
+          color: "#0a66c2",
+          hasTitle: false,
+        },
+        {
+          id: "yt",
+          name: "YouTube",
+          emoji: "▶️",
+          color: "#ff0000",
+          hasTitle: true,
+        },
+      ];
+
+      // Fields that get persisted (boilerplate + all tags)
+      const PERSISTENT_FIELDS = [
+        "boilerplate",
+        ...platforms.map((p) => "tags_" + p.id),
+      ];
+
+      const STORAGE_KEY = "captionforge_persistent";
+      const API_BASE = "/api";
+
+      // ── API FUNCTIONS ─────────────────────────────────────────────
+
+      async function saveToApi() {
+        const data = {};
+        PERSISTENT_FIELDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) data[id] = el.value;
+        });
+        
+        try {
+          await fetch(`${API_BASE}/settings`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          setSaveStatus("saved");
+        } catch (e) {
+          console.warn("Could not save to server:", e);
+          // Fallback to localStorage
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          setSaveStatus("saved");
+        }
+      }
+
+      async function loadFromApi() {
+        try {
+          const res = await fetch(`${API_BASE}/settings`);
+          if (!res.ok) throw new Error("Failed to fetch");
+          const data = await res.json();
+          
+          let hasData = false;
+          PERSISTENT_FIELDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el && data[id] !== undefined && data[id] !== null) {
+              el.value = data[id];
+              if (data[id]) hasData = true;
+            }
+          });
+          if (hasData) setSaveStatus("saved");
+        } catch (e) {
+          console.warn("Could not load from server, falling back to localStorage:", e);
+          // Fallback to localStorage
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            let hasData = false;
+            PERSISTENT_FIELDS.forEach((id) => {
+              const el = document.getElementById(id);
+              if (el && data[id] !== undefined) {
+                el.value = data[id];
+                if (data[id]) hasData = true;
+              }
+            });
+            if (hasData) setSaveStatus("saved");
+          } catch (e2) {
+            console.warn("Could not load saved data:", e2);
+          }
+        }
+      }
+
+      async function clearSavedData() {
+        if (
+          !confirm(
+            "Clear all saved boilerplate & tags? This cannot be undone.",
+          )
+        )
+          return;
+        
+        try {
+          await fetch(`${API_BASE}/settings`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              boilerplate: "",
+              tags_fb: "",
+              tags_ig: "",
+              tags_tw: "",
+              tags_wa: "",
+              tags_li: "",
+              tags_yt: "",
+            }),
+          });
+        } catch (e) {
+          console.warn("Could not clear server data:", e);
+        }
+        
+        localStorage.removeItem(STORAGE_KEY);
+        PERSISTENT_FIELDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        setSaveStatus("cleared");
+      }
+
+      // ── SAVE / LOAD (Legacy localStorage) ─────────────────────────
+
+      function saveToStorage() {
+        saveToApi();
+      }
+
+      function loadFromStorage() {
+        loadFromApi();
+      }
+
+      // ── SAVE STATUS INDICATOR ────────────────────────────────────
+
+      let saveTimer = null;
+      let statusResetTimer = null;
+
+      function setSaveStatus(state) {
+        const indicator = document.getElementById("saveIndicator");
+        const label = document.getElementById("saveLabel");
+        indicator.className = "save-indicator";
+
+        if (state === "saving") {
+          indicator.classList.add("saving");
+          label.textContent = "saving…";
+        } else if (state === "saved") {
+          indicator.classList.add("saved");
+          label.textContent = "auto-saved";
+          clearTimeout(statusResetTimer);
+          statusResetTimer = setTimeout(() => {
+            indicator.className = "save-indicator";
+            label.textContent = "saved ✓";
+          }, 2000);
+        } else if (state === "cleared") {
+          label.textContent = "cleared";
+          statusResetTimer = setTimeout(() => {
+            indicator.className = "save-indicator";
+            label.textContent = "not saved";
+          }, 2500);
+        }
+      }
+
+      // Debounced auto-save on input
+      function onPersistentFieldInput() {
+        setSaveStatus("saving");
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(saveToStorage, 800);
+      }
+
+      // Attach listeners to all persistent fields
+      function attachSaveListeners() {
+        PERSISTENT_FIELDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.addEventListener("input", onPersistentFieldInput);
+        });
+      }
+
+      // ── CAPTION GENERATION ──────────────────────────────────────
+
+      function val(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : "";
+      }
+
+      function buildCaption(platform) {
+        const boilerplate = val("boilerplate");
+        const tags = val("tags_" + platform.id);
+        const desc = val("desc_" + platform.id);
+        const title = platform.hasTitle ? val("title_" + platform.id) : "";
+
+        let parts = [];
+
+        if (platform.hasTitle && title) {
+          parts.push("🎬 " + title);
+          parts.push("");
+        }
+
+        if (desc) parts.push(desc);
+
+        if (boilerplate) {
+          if (parts.length) parts.push("");
+          parts.push("—");
+          parts.push(boilerplate);
+        }
+
+        if (tags) {
+          if (parts.length) parts.push("");
+          parts.push(tags);
+        }
+
+        return parts.join("\n");
+      }
+
+      // Store generated data globally for manual save
+      let currentGeneratedData = null;
+
+      async function generateContent() {
+        const outputSection = document.getElementById("outputSection");
+        const grid = document.getElementById("outputsGrid");
+
+        grid.innerHTML = "";
+
+        // Build all captions first
+        currentGeneratedData = {};
+        platforms.forEach((p) => {
+          const text = buildCaption(p);
+          currentGeneratedData["content_" + p.id] = text;
+          if (p.hasTitle) {
+            currentGeneratedData["title_yt"] = val("title_yt");
+          }
+        });
+
+        // Render output
+        platforms.forEach((p) => {
+          const text = currentGeneratedData["content_" + p.id];
+          const charCount = text.length;
+
+          const card = document.createElement("div");
+          card.className = "output-card";
+          card.innerHTML = `
       <div class="output-card-header">
         <div class="output-card-title" style="--p-color: ${p.color}">
           <div class="output-dot" style="background:${p.color}"></div>
@@ -884,57 +1244,88 @@ function generateContent() {
       </div>
       <div class="output-body">
         <div class="output-text">${escapeHtml(text) || '<span style="color:var(--text-dim); font-style:italic">No content provided for this platform.</span>'}</div>
-        ${text ? `<div class="char-count">${charCount} characters</div>` : ''}
+        ${text ? `<div class="char-count">${charCount} characters</div>` : ""}
       </div>
     `;
-    grid.appendChild(card);
-  });
+          grid.appendChild(card);
+        });
 
-  outputSection.classList.add('visible');
+        outputSection.classList.add("visible");
 
-  setTimeout(() => {
-    outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
-}
+        setTimeout(() => {
+          outputSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
 
-function copyText(btn, text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const prev = btn.innerHTML;
-    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> COPIED`;
-    btn.classList.add('copied');
-    showToast();
-    setTimeout(() => {
-      btn.innerHTML = prev;
-      btn.classList.remove('copied');
-    }, 2000);
-  });
-}
+      function copyText(btn, text) {
+        navigator.clipboard.writeText(text).then(() => {
+          const prev = btn.innerHTML;
+          btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> COPIED`;
+          btn.classList.add("copied");
+          showToast();
+          setTimeout(() => {
+            btn.innerHTML = prev;
+            btn.classList.remove("copied");
+          }, 2000);
+        });
+      }
 
-function showToast() {
-  const t = document.getElementById('toast');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
+      function showToast() {
+        const t = document.getElementById("toast");
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2500);
+      }
 
-function clearAll() {
-  document.querySelectorAll('textarea, input[type="text"]').forEach(el => el.value = '');
-  document.getElementById('outputSection').classList.remove('visible');
-}
+      function clearAll() {
+        document
+          .querySelectorAll('textarea, input[type="text"]')
+          .forEach((el) => (el.value = ""));
+        document.getElementById("outputSection").classList.remove("visible");
+      }
 
-function escapeHtml(text) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
 
-// ── INIT ────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  loadFromStorage();
-  attachSaveListeners();
-});
-</script>
-</body>
+      // ── SAVE GENERATED CONTENT ─────────────────────────────────
+
+      async function saveGeneratedContent() {
+        if (!currentGeneratedData) {
+          alert("No generated content to save. Please generate content first.");
+          return;
+        }
+
+        const btn = document.getElementById("btnSaveGenerated");
+        const originalText = btn.innerHTML;
+        
+        try {
+          await fetch(`${API_BASE}/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(currentGeneratedData),
+          });
+          
+          // Show success state
+          btn.innerHTML = "✓ SAVED TO DATABASE";
+          btn.classList.add("saved");
+          
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove("saved");
+          }, 3000);
+        } catch (e) {
+          console.warn("Could not save generated content:", e);
+          alert("Failed to save to database. Please try again.");
+        }
+      }
+
+      // ── INIT ────────────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", () => {
+        loadFromStorage();
+        attachSaveListeners();
+      });
+    </script>
+  </body>
 </html>
