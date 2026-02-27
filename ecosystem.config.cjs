@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: 'captionforge',
     script: 'bun src/server.ts',
-    cwd: '/Users/soumyasarkar/workspace/code/social-bvn',
+    cwd: '/home/ubuntu/workspace/code/social-bvn',
     watch: false,
     instances: 1,
     max_memory_restart: '500M',
