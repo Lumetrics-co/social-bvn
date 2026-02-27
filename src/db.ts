@@ -110,6 +110,10 @@ export const saveGeneratedContent = (data: {
   return db.query("SELECT * FROM generated_content WHERE id = ?").get(lastId.id);
 };
 
+export const getGeneratedContentById = (id: number) => {
+  return db.query("SELECT * FROM generated_content WHERE id = ?").get(id);
+};
+
 export const getGeneratedHistory = (limit = 50) => {
   return db.query("SELECT * FROM generated_content ORDER BY created_at DESC LIMIT ?").all(limit);
 };

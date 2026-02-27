@@ -569,6 +569,37 @@
         border-color: var(--accent);
       }
 
+      .btn-share {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-family: "Manrope", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        display: none;
+      }
+
+      .btn-share.visible {
+        display: flex;
+      }
+
+      .btn-share:hover {
+        border-color: var(--accent);
+        background: var(--surface2);
+      }
+
+      .btn-share.copied {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
       /* TOAST */
       .toast {
         position: fixed;
@@ -594,6 +625,117 @@
       .toast.show {
         transform: translateY(0);
         opacity: 1;
+      }
+
+      /* AI SECTION */
+      .ai-section {
+        background: linear-gradient(135deg, rgba(232, 255, 107, 0.05) 0%, rgba(232, 255, 107, 0.02) 100%);
+        border: 1px solid rgba(232, 255, 107, 0.15);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 36px;
+      }
+
+      .ai-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .ai-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .ai-title h3 {
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .ai-badge {
+        background: linear-gradient(135deg, var(--accent) 0%, #d4eb5c 100%);
+        color: #0c0c0e;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-ai-generate {
+        background: linear-gradient(135deg, var(--accent) 0%, #d4eb5c 100%);
+        color: #0c0c0e;
+        border: none;
+        border-radius: 10px;
+        font-family: "Manrope", sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 10px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .btn-ai-generate:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(232, 255, 107, 0.3);
+      }
+
+      .btn-ai-generate:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .ai-input-wrap {
+        display: flex;
+        gap: 12px;
+      }
+
+      .ai-input-wrap textarea {
+        flex: 1;
+        min-height: 60px;
+      }
+
+      .ai-input-wrap .btn-ai-generate {
+        align-self: flex-end;
+      }
+
+      .ai-loading {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: 13px;
+        margin-top: 12px;
+      }
+
+      .ai-loading.visible {
+        display: flex;
+      }
+
+      .ai-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
 
       /* SCROLLBAR */
@@ -786,6 +928,37 @@
         </div>
       </div>
 
+      <!-- AI GENERATE SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-label">AI Assist</span>
+          <div class="section-line"></div>
+        </div>
+        
+        <div class="ai-section">
+          <div class="ai-header">
+            <div class="ai-title">
+              <h3>✨ Generate with AI</h3>
+              <span class="ai-badge">Gemini</span>
+            </div>
+          </div>
+          <div class="ai-input-wrap">
+            <textarea
+              id="ai_context"
+              class="short"
+              placeholder="Describe what your content is about — e.g., 'New product launch for a sustainable fashion brand'"
+            ></textarea>
+            <button class="btn-ai-generate" id="btnAIGenerate" onclick="generateWithAI()">
+              Generate
+            </button>
+          </div>
+          <div class="ai-loading" id="aiLoading">
+            <div class="ai-spinner"></div>
+            <span>Generating content with AI...</span>
+          </div>
+        </div>
+      </div>
+
       <!-- PLATFORM DESCRIPTIONS -->
       <div class="section">
         <div class="section-header">
@@ -944,6 +1117,9 @@
         <div class="save-generated-wrap">
           <button class="btn-save-generated" id="btnSaveGenerated" onclick="saveGeneratedContent()">
             💾 SAVE GENERATED CONTENT TO DATABASE
+          </button>
+          <button class="btn-share" id="btnShare" onclick="shareGeneratedUrl()">
+            🔗 SHARE LINK
           </button>
         </div>
       </div>
@@ -1307,6 +1483,170 @@
         return div.innerHTML;
       }
 
+      // ── AI GENERATION ───────────────────────────────────────────
+
+      async function generateWithAI() {
+        const contextEl = document.getElementById("ai_context");
+        const context = contextEl.value.trim();
+        
+        if (!context) {
+          alert("Please describe what your content is about.");
+          contextEl.focus();
+          return;
+        }
+
+        const btn = document.getElementById("btnAIGenerate");
+        const loading = document.getElementById("aiLoading");
+        
+        // Show loading state
+        btn.disabled = true;
+        loading.classList.add("visible");
+
+        try {
+          const res = await fetch(`${API_BASE}/ai-generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ context }),
+          });
+
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || "Failed to generate content");
+          }
+
+          const data = await res.json();
+
+          // Populate all description fields
+          if (data.desc_fb) document.getElementById("desc_fb").value = data.desc_fb;
+          if (data.desc_ig) document.getElementById("desc_ig").value = data.desc_ig;
+          if (data.desc_tw) document.getElementById("desc_tw").value = data.desc_tw;
+          if (data.desc_wa) document.getElementById("desc_wa").value = data.desc_wa;
+          if (data.desc_li) document.getElementById("desc_li").value = data.desc_li;
+          if (data.desc_yt) document.getElementById("desc_yt").value = data.desc_yt;
+          if (data.title_yt) document.getElementById("title_yt").value = data.title_yt;
+
+          // Scroll to content section
+          document.querySelector('.platforms-grid').scrollIntoView({ behavior: "smooth", block: "center" });
+
+        } catch (e) {
+          console.error("AI generation error:", e);
+          alert(e.message || "Failed to generate content with AI. Please try again.");
+        } finally {
+          // Hide loading state
+          btn.disabled = false;
+          loading.classList.remove("visible");
+        }
+      }
+
+      // ── LOAD CONTENT BY ID ───────────────────────────────────
+
+      async function loadContentById(id) {
+        try {
+          const res = await fetch(`${API_BASE}/history/${id}`);
+          
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || "Failed to load content");
+          }
+
+          const data = await res.json();
+
+          // Set currentGeneratedData from the fetched content
+          currentGeneratedData = {};
+          currentGeneratedData["content_fb"] = data.content_fb || "";
+          currentGeneratedData["content_ig"] = data.content_ig || "";
+          currentGeneratedData["content_tw"] = data.content_tw || "";
+          currentGeneratedData["content_wa"] = data.content_wa || "";
+          currentGeneratedData["content_li"] = data.content_li || "";
+          currentGeneratedData["content_yt"] = data.content_yt || "";
+          currentGeneratedData["title_yt"] = data.title_yt || "";
+
+          // Render the output section (same as generateContent does)
+          const outputSection = document.getElementById("outputSection");
+          const grid = document.getElementById("outputsGrid");
+
+          grid.innerHTML = "";
+          copyTextRefs.clear();
+          copyIndex = 0;
+
+          platforms.forEach((p) => {
+            const text = currentGeneratedData["content_" + p.id];
+            const charCount = text.length;
+            const thisCopyIndex = copyIndex++;
+
+            const card = document.createElement("div");
+            card.className = "output-card";
+            card.innerHTML = `
+              <div class="output-card-header">
+                <div class="output-card-title" style="--p-color: ${p.color}">
+                  <div class="output-dot" style="background:${p.color}"></div>
+                  ${p.emoji} ${p.name}
+                </div>
+                <button class="btn-copy" data-index="${thisCopyIndex}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  COPY
+                </button>
+              </div>
+              <div class="output-body">
+                <div class="output-text">${escapeHtml(text) || '<span style="color:var(--text-dim); font-style:italic">No content provided for this platform.</span>'}</div>
+                ${text ? `<div class="char-count">${charCount} characters</div>` : ""}
+              </div>
+            `;
+            
+            // Store text reference
+            copyTextRefs.set(thisCopyIndex, text);
+            
+            // Add click listener for copy
+            const copyBtn = card.querySelector('.btn-copy');
+            copyBtn.addEventListener('click', function() {
+              const idx = parseInt(this.getAttribute('data-index'));
+              const textToCopy = copyTextRefs.get(idx);
+              copyText(this, textToCopy);
+            });
+            
+            grid.appendChild(card);
+          });
+
+          outputSection.classList.add("visible");
+
+          // Show share button
+          const shareBtn = document.getElementById("btnShare");
+          shareBtn.classList.add("visible");
+          shareBtn.onclick = () => shareGeneratedUrl(id);
+
+          // Scroll to output section
+          setTimeout(() => {
+            outputSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
+
+        } catch (e) {
+          console.error("Load content error:", e);
+          alert(e.message || "Failed to load content. The ID may not exist.");
+        }
+      }
+
+      // ── SHARE GENERATED URL ─────────────────────────────────────
+
+      function shareGeneratedUrl(id) {
+        const url = window.location.origin + window.location.pathname + "?id=" + id;
+        
+        navigator.clipboard.writeText(url).then(() => {
+          const btn = document.getElementById("btnShare");
+          const prev = btn.innerHTML;
+          btn.innerHTML = "✓ LINK COPIED";
+          btn.classList.add("copied");
+          showToast();
+          
+          setTimeout(() => {
+            btn.innerHTML = prev;
+            btn.classList.remove("copied");
+          }, 3000);
+        }).catch((err) => {
+          console.error("Failed to copy URL:", err);
+          alert("Failed to copy URL to clipboard.");
+        });
+      }
+
       // ── SAVE GENERATED CONTENT ─────────────────────────────────
 
       async function saveGeneratedContent() {
@@ -1316,19 +1656,27 @@
         }
 
         const btn = document.getElementById("btnSaveGenerated");
+        const shareBtn = document.getElementById("btnShare");
         const originalText = btn.innerHTML;
         
         try {
-          await fetch(`${API_BASE}/generate`, {
+          const res = await fetch(`${API_BASE}/generate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(currentGeneratedData),
           });
-          
+
+          const result = await res.json();
+          const savedId = result.id;
+
           // Show success state
           btn.innerHTML = "✓ SAVED TO DATABASE";
           btn.classList.add("saved");
           
+          // Show and enable share button
+          shareBtn.classList.add("visible");
+          shareBtn.onclick = () => shareGeneratedUrl(savedId);
+
           setTimeout(() => {
             btn.innerHTML = originalText;
             btn.classList.remove("saved");
@@ -1343,6 +1691,16 @@
       document.addEventListener("DOMContentLoaded", () => {
         loadFromStorage();
         attachSaveListeners();
+        
+        // Check for ?id= parameter to load saved content
+        const urlParams = new URLSearchParams(window.location.search);
+        const contentId = urlParams.get('id');
+        if (contentId) {
+          const id = parseInt(contentId);
+          if (!isNaN(id)) {
+            loadContentById(id);
+          }
+        }
       });
     </script>
   </body>
