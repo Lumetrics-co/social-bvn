@@ -1207,12 +1207,17 @@
 
       // Store generated data globally for manual save
       let currentGeneratedData = null;
+      // Store text references for copy buttons
+      const copyTextRefs = new Map();
+      let copyIndex = 0;
 
       async function generateContent() {
         const outputSection = document.getElementById("outputSection");
         const grid = document.getElementById("outputsGrid");
 
         grid.innerHTML = "";
+        copyTextRefs.clear();
+        copyIndex = 0;
 
         // Build all captions first
         currentGeneratedData = {};
@@ -1228,6 +1233,7 @@
         platforms.forEach((p) => {
           const text = currentGeneratedData["content_" + p.id];
           const charCount = text.length;
+          const thisCopyIndex = copyIndex++;
 
           const card = document.createElement("div");
           card.className = "output-card";
@@ -1237,7 +1243,7 @@
           <div class="output-dot" style="background:${p.color}"></div>
           ${p.emoji} ${p.name}
         </div>
-        <button class="btn-copy" onclick="copyText(this, ${JSON.stringify(text)})">
+        <button class="btn-copy" data-index="${thisCopyIndex}">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           COPY
         </button>
@@ -1247,6 +1253,18 @@
         ${text ? `<div class="char-count">${charCount} characters</div>` : ""}
       </div>
     `;
+          
+          // Store text reference
+          copyTextRefs.set(thisCopyIndex, text);
+          
+          // Add click listener for copy
+          const copyBtn = card.querySelector('.btn-copy');
+          copyBtn.addEventListener('click', function() {
+            const idx = parseInt(this.getAttribute('data-index'));
+            const textToCopy = copyTextRefs.get(idx);
+            copyText(this, textToCopy);
+          });
+          
           grid.appendChild(card);
         });
 
