@@ -9,7 +9,7 @@ const projectRoot = join(__dirname, "..");
 
 const PORT = 3330;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent";
 
 // Type definitions
 interface SettingsData {
@@ -30,10 +30,12 @@ interface GenerateData {
   content_li?: string;
   content_yt?: string;
   title_yt?: string;
+  image?: string; // Base64 encoded image with data URL
 }
 
 interface AIGenerateRequest {
   context: string;
+  image?: string; // Base64 encoded image with data URL
 }
 
 interface GeminiResponse {
@@ -44,6 +46,61 @@ interface GeminiResponse {
       }>;
     };
   }>;
+}
+
+// Validation result type
+interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+}
+
+// Required fields in the response
+const REQUIRED_FIELDS = ["desc_fb", "desc_ig", "desc_tw", "desc_wa", "desc_li", "desc_yt", "title_yt"];
+
+// Validate Gemini API response structure and content
+function validateGeminiResponse(data: any): ValidationResult {
+  const errors: string[] = [];
+
+  // Check if data is an object
+  if (!data || typeof data !== "object") {
+    return { valid: false, errors: ["Response is not a valid JSON object"] };
+  }
+
+  // Check all required fields exist
+  for (const field of REQUIRED_FIELDS) {
+    if (!(field in data)) {
+      errors.push(`Missing required field: ${field}`);
+    }
+  }
+
+  // Check field content and type
+  for (const field of REQUIRED_FIELDS) {
+    const value = data[field];
+
+    // Check if field exists and is a string
+    if (!value || typeof value !== "string") {
+      errors.push(`Field "${field}" is not a string`);
+      continue;
+    }
+
+    // Check if field is empty after trimming
+    const trimmed = value.trim();
+    if (!trimmed) {
+      errors.push(`Field "${field}" is empty`);
+      continue;
+    }
+
+    // Check minimum length (avoid single words or very short content)
+    const minLength = field === "title_yt" ? 5 : 20;
+    if (trimmed.length < minLength) {
+      errors.push(`Field "${field}" is too short (${trimmed.length} chars, minimum ${minLength})`);
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
 }
 
 // Simple router
@@ -80,6 +137,7 @@ const router: Record<string, (req: Request) => Response | Promise<Response>> = {
         content_li: body.content_li,
         content_yt: body.content_yt,
         title_yt: body.title_yt,
+        image: body.image,
       });
       return Response.json(result);
     } catch (error) {
@@ -130,8 +188,8 @@ const router: Record<string, (req: Request) => Response | Promise<Response>> = {
   "POST /api/ai-generate": async (req: Request) => {
     try {
       const body = (await req.json()) as AIGenerateRequest;
-      const { context } = body;
-      
+      const { context, image } = body;
+
       if (!context) {
         return Response.json({ error: "Context is required" }, { status: 400 });
       }
@@ -140,33 +198,94 @@ const router: Record<string, (req: Request) => Response | Promise<Response>> = {
         return Response.json({ error: "GEMINI_API_KEY not configured" }, { status: 500 });
       }
 
-      const prompt = `Generate social media content for the following topic/context: "${context}"
+      const prompt = `You are a social media content expert. Generate tailored social media content for the following topic/context: "${context}"${image ? "\n\nAnalyze the provided image and use it along with the context to create tailored content." : ""}
 
-Return a JSON object with the following fields:
-{
-  "desc_fb": "Facebook post - engaging, community-focused, can be longer (100-200 words)",
-  "desc_ig": "Instagram caption - punchy, visual-first, use emojis, lead with hook (50-100 words)",
-  "desc_tw": "Twitter/X tweet - very short, punchy, max 280 chars with hashtags",
-  "desc_wa": "WhatsApp channel message - conversational, personal, like texting a friend (50-100 words)",
-  "desc_li": "LinkedIn post - professional, insight-driven, strong hook, call to action (100-150 words)",
-  "desc_yt": "YouTube description - detailed, include timestamps format, links, video summary (150-250 words)",
-  "title_yt": "YouTube video title - compelling, SEO-friendly, use numbers or power words (50-70 chars)"
-}
+Create engaging, platform-specific content for each social media platform.`;
 
-Only return valid JSON, no other text.`;
+      // Define the JSON schema for structured output
+      const responseSchema = {
+        type: "object",
+        properties: {
+          desc_fb: {
+            type: "string",
+            description: "Facebook post - engaging, community-focused, narrative-driven (100-200 words)"
+          },
+          desc_ig: {
+            type: "string",
+            description: "Instagram caption - punchy, visual-first, hook at start, use emojis (50-100 words)"
+          },
+          desc_tw: {
+            type: "string",
+            description: "Twitter/X tweet - concise and engaging, max 280 chars with hashtags"
+          },
+          desc_wa: {
+            type: "string",
+            description: "WhatsApp channel message - conversational and personal tone (50-100 words)"
+          },
+          desc_li: {
+            type: "string",
+            description: "LinkedIn post - professional, insight-driven, strong call to action (100-150 words)"
+          },
+          desc_yt: {
+            type: "string",
+            description: "YouTube description - detailed, informative, include timestamps (150-250 words)"
+          },
+          title_yt: {
+            type: "string",
+            description: "YouTube video title - compelling, SEO-optimized, power words (50-70 chars)"
+          }
+        },
+        required: ["desc_fb", "desc_ig", "desc_tw", "desc_wa", "desc_li", "desc_yt", "title_yt"]
+      };
+
+      // Build the parts array with text and optional image
+      const parts: any[] = [{ text: prompt }];
+
+      if (image) {
+        // Extract MIME type and base64 data from data URL
+        const matches = image.match(/^data:([^;]+);base64,(.+)$/);
+        if (matches) {
+          const mimeType = matches[1];
+          const base64Data = matches[2];
+
+          // DEBUG: Log base64 data info
+          console.log("=== BASE64 DEBUG ===");
+          console.log("MIME Type:", mimeType);
+          console.log("Base64 length:", base64Data.length);
+          console.log("Contains newlines:", base64Data.includes('\n'));
+          console.log("Contains carriage returns:", base64Data.includes('\r'));
+          console.log("Base64 sample (first 100 chars):", base64Data.slice(0, 100));
+          console.log("Base64 sample (last 100 chars):", base64Data.slice(-100));
+          console.log("===================");
+
+          parts.push({
+            inline_data: {
+              mime_type: mimeType,
+              data: base64Data,
+            },
+          });
+        }
+      }
+
+      // TEMPORARILY COMMENTED OUT FOR DEBUGGING
+      const requestBody = {
+        contents: [{ parts }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 80000,
+          responseMimeType: "application/json",
+          responseJsonSchema: responseSchema,
+        },
+      };
+
+      // console.log("Request body that will be sent to Gemini:", JSON.stringify(requestBody, null, 2));
 
       const geminiResponse = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 2048,
-          },
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!geminiResponse.ok) {
@@ -175,26 +294,62 @@ Only return valid JSON, no other text.`;
         return Response.json({ error: "Failed to generate content with AI" }, { status: 500 });
       }
 
-      const geminiData = (await geminiResponse.json()) as GeminiResponse;
-      
-      // Extract the generated text from Gemini response
-      const generatedText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-      
-      if (!generatedText) {
-        return Response.json({ error: "No content generated from AI" }, { status: 500 });
+      // Get raw response text first to check if it's complete
+      const rawResponseText = await geminiResponse.text();
+      console.log("Raw response from fetch - length:", rawResponseText.length);
+      console.log("Raw response - first 300 chars:", rawResponseText.substring(0, 300));
+
+      let geminiData: GeminiResponse;
+      try {
+        geminiData = JSON.parse(rawResponseText);
+      } catch (e) {
+        console.error("Failed to parse Gemini response:", e);
+        return Response.json({ error: "Failed to parse Gemini response" }, { status: 500 });
       }
 
-      // Parse the JSON response
+      // Extract the generated text from Gemini response
+      const generatedText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!generatedText) {
+        return Response.json(
+          { error: "AI service returned empty response. Please try again." },
+          { status: 500 }
+        );
+      }
+
+      console.log("=== GEMINI RESPONSE DEBUG ===");
+      console.log("Response type:", typeof generatedText);
+      console.log("Response length:", generatedText.length);
+      console.log("First 200 chars:", generatedText.substring(0, 200));
+      console.log("Last 200 chars:", generatedText.substring(generatedText.length - 200));
+      console.log("Full raw response:", generatedText);
+      console.log("=============================");
+
+      // Parse the JSON response - should be valid JSON now with structured output
       let content;
       try {
-        // Try to extract JSON from the response (in case it includes markdown code blocks)
-        const jsonMatch = generatedText.match(/```json\n([\s\S]*?)\n```/) || 
-                          generatedText.match(/```\n([\s\S]*?)\n```/) ||
-                          [null, generatedText];
-        content = JSON.parse(jsonMatch[1]);
+        content = JSON.parse(generatedText);
+        console.log("✓ Successfully parsed JSON");
+        console.log("Parsed keys:", Object.keys(content));
       } catch (parseError) {
-        console.error("Failed to parse AI response:", generatedText);
-        return Response.json({ error: "Failed to parse AI response" }, { status: 500 });
+        console.error("✗ Failed to parse AI response");
+        console.error("Parse error:", parseError);
+        console.error("Attempted to parse:", generatedText.substring(0, 500));
+        return Response.json(
+          { error: `Invalid JSON format from AI: ${parseError instanceof Error ? parseError.message : "Unknown error"}` },
+          { status: 500 }
+        );
+      }
+
+      // Validate the response structure and content
+      const validation = validateGeminiResponse(content);
+      if (!validation.valid) {
+        console.error("AI response validation failed:", validation.errors);
+        const errorMsg =
+          validation.errors.length === 1
+            ? validation.errors[0]
+            : `AI generated incomplete content: ${validation.errors.slice(0, 2).join(", ")}`;
+        return Response.json({ error: errorMsg }, { status: 500 });
       }
 
       return Response.json(content);
@@ -217,19 +372,35 @@ Only return valid JSON, no other text.`;
   },
 };
 
+// CORS headers
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Max-Age": "86400",
+};
+
 // Handle incoming requests
 async function handleRequest(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const method = req.method;
   const path = url.pathname;
 
+  // Handle CORS preflight requests
+  if (method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders,
+    });
+  }
+
   // API routes
   const apiKey = `${method} ${path}`;
-  
+
   if (path.startsWith("/api/")) {
     // Check for exact match first
     let handler = router[apiKey];
-    
+
     // Check for dynamic route: GET /api/history/:id
     if (!handler && method === "GET" && path.startsWith("/api/history/")) {
       const idStr = path.split("/").pop();
@@ -240,23 +411,42 @@ async function handleRequest(req: Request): Promise<Response> {
         }
       }
     }
-    
+
     if (handler) {
-      return handler(req);
+      const response = await handler(req);
+      // Add CORS headers to response
+      const headers = new Headers(response.headers);
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        headers.set(key, value);
+      });
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
     }
     return Response.json(
       { error: "Endpoint not found", path: apiKey },
-      { status: 404 }
+      { status: 404, headers: corsHeaders }
     );
   }
 
   // Static file serving for root
   if (method === "GET" && (path === "/" || path === "/index.html")) {
-    return router["GET /"]!(req);
+    const response = router["GET /"]!(req);
+    const headers = new Headers(response.headers);
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
 
   // 404 for unknown routes
-  return Response.json({ error: "Not found" }, { status: 404 });
+  return Response.json({ error: "Not found" }, { status: 404, headers: corsHeaders });
 }
 
 // Start server

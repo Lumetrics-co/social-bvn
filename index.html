@@ -738,6 +738,81 @@
         to { transform: rotate(360deg); }
       }
 
+      /* IMAGE UPLOAD SECTION */
+      .ai-image-upload {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .image-upload-input {
+        display: none;
+      }
+
+      .image-upload-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(232, 255, 107, 0.1);
+        border: 1px dashed rgba(232, 255, 107, 0.3);
+        border-radius: 10px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+
+      .image-upload-label:hover {
+        background: rgba(232, 255, 107, 0.15);
+        border-color: rgba(232, 255, 107, 0.5);
+        color: var(--text);
+      }
+
+      .image-preview {
+        display: none;
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.3);
+        max-height: 200px;
+      }
+
+      .image-preview.visible {
+        display: block;
+      }
+
+      .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        max-height: 200px;
+      }
+
+      .image-preview-remove {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.6);
+        border: none;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: all 0.2s;
+      }
+
+      .image-preview-remove:hover {
+        background: rgba(0, 0, 0, 0.9);
+      }
+
       /* SCROLLBAR */
       ::-webkit-scrollbar {
         width: 6px;
@@ -942,6 +1017,24 @@
               <span class="ai-badge">Gemini</span>
             </div>
           </div>
+
+          <div class="ai-image-upload">
+            <input
+              type="file"
+              id="ai_image"
+              class="image-upload-input"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              onchange="handleImageSelect(event)"
+            />
+            <label for="ai_image" class="image-upload-label">
+              📷 Choose image (optional)
+            </label>
+            <div class="image-preview" id="imagePreview">
+              <img id="previewImg" src="" alt="preview" />
+              <button class="image-preview-remove" onclick="removeImage()">✕</button>
+            </div>
+          </div>
+
           <div class="ai-input-wrap">
             <textarea
               id="ai_context"
@@ -1193,7 +1286,8 @@
       ];
 
       const STORAGE_KEY = "captionforge_persistent";
-      const API_BASE = "/api";
+      // Use absolute URL with window.location to ensure correct origin
+      const API_BASE = `http://${window.location.hostname}:3330/api`;
 
       // ── API FUNCTIONS ─────────────────────────────────────────────
 
@@ -1405,6 +1499,11 @@
           }
         });
 
+        // Include image if selected
+        if (selectedImageBase64) {
+          currentGeneratedData["image"] = selectedImageBase64;
+        }
+
         // Render output
         platforms.forEach((p) => {
           const text = currentGeneratedData["content_" + p.id];
@@ -1483,12 +1582,47 @@
         return div.innerHTML;
       }
 
+      // ── IMAGE HANDLING ──────────────────────────────────────────
+
+      let selectedImageBase64 = null;
+
+      function handleImageSelect(event) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Image size must be less than 5MB");
+          event.target.value = "";
+          return;
+        }
+
+        // Read file as base64
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          selectedImageBase64 = e.target?.result;
+
+          // Show preview
+          const preview = document.getElementById("imagePreview");
+          const img = document.getElementById("previewImg");
+          img.src = selectedImageBase64;
+          preview.classList.add("visible");
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function removeImage() {
+        selectedImageBase64 = null;
+        document.getElementById("ai_image").value = "";
+        document.getElementById("imagePreview").classList.remove("visible");
+      }
+
       // ── AI GENERATION ───────────────────────────────────────────
 
       async function generateWithAI() {
         const contextEl = document.getElementById("ai_context");
         const context = contextEl.value.trim();
-        
+
         if (!context) {
           alert("Please describe what your content is about.");
           contextEl.focus();
@@ -1497,16 +1631,23 @@
 
         const btn = document.getElementById("btnAIGenerate");
         const loading = document.getElementById("aiLoading");
-        
+
         // Show loading state
         btn.disabled = true;
         loading.classList.add("visible");
 
         try {
+          const payload = { context };
+
+          // Include image if selected
+          if (selectedImageBase64) {
+            payload.image = selectedImageBase64;
+          }
+
           const res = await fetch(`${API_BASE}/ai-generate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ context }),
+            body: JSON.stringify(payload),
           });
 
           if (!res.ok) {
@@ -1516,21 +1657,89 @@
 
           const data = await res.json();
 
-          // Populate all description fields
-          if (data.desc_fb) document.getElementById("desc_fb").value = data.desc_fb;
-          if (data.desc_ig) document.getElementById("desc_ig").value = data.desc_ig;
-          if (data.desc_tw) document.getElementById("desc_tw").value = data.desc_tw;
-          if (data.desc_wa) document.getElementById("desc_wa").value = data.desc_wa;
-          if (data.desc_li) document.getElementById("desc_li").value = data.desc_li;
-          if (data.desc_yt) document.getElementById("desc_yt").value = data.desc_yt;
-          if (data.title_yt) document.getElementById("title_yt").value = data.title_yt;
+          // Validate response is an object
+          if (!data || typeof data !== "object") {
+            throw new Error("Invalid API response format");
+          }
+
+          // Expected fields mapping: response field -> element ID
+          const fieldMapping = {
+            desc_fb: "desc_fb",
+            desc_ig: "desc_ig",
+            desc_tw: "desc_tw",
+            desc_wa: "desc_wa",
+            desc_li: "desc_li",
+            desc_yt: "desc_yt",
+            title_yt: "title_yt",
+          };
+
+          let populatedCount = 0;
+          const missingFields = [];
+
+          // Populate all description fields with validation
+          for (const [responseField, elementId] of Object.entries(fieldMapping)) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+              console.warn(`Element #${elementId} not found in DOM`);
+              continue;
+            }
+
+            const value = data[responseField];
+
+            if (value && typeof value === "string" && value.trim()) {
+              element.value = value;
+              populatedCount++;
+            } else {
+              missingFields.push(responseField);
+              console.warn(`Response field "${responseField}" is missing or empty`);
+            }
+          }
+
+          // Check if we got meaningful content
+          if (populatedCount === 0) {
+            throw new Error("API returned no valid content. Please try again.");
+          }
+
+          // Warn user if some fields are missing
+          if (missingFields.length > 0) {
+            console.warn(`Warning: ${missingFields.length} fields missing from response:`, missingFields);
+          }
+
+          // Log successful generation
+          console.log(`✓ AI generation successful: ${populatedCount}/${Object.keys(fieldMapping).length} fields populated`);
+
+          // Populate currentGeneratedData for saving (so user can save after AI generation)
+          currentGeneratedData = {};
+          for (const [responseField, elementId] of Object.entries(fieldMapping)) {
+            const element = document.getElementById(elementId);
+            if (element) {
+              currentGeneratedData["content_" + elementId.replace("desc_", "")] = element.value || "";
+            }
+          }
+          // Include image if selected
+          if (selectedImageBase64) {
+            currentGeneratedData["image"] = selectedImageBase64;
+          }
 
           // Scroll to content section
           document.querySelector('.platforms-grid').scrollIntoView({ behavior: "smooth", block: "center" });
 
         } catch (e) {
           console.error("AI generation error:", e);
-          alert(e.message || "Failed to generate content with AI. Please try again.");
+
+          // Provide user-friendly error message
+          let userMessage = "Failed to generate content with AI. Please try again.";
+          if (e.message.includes("Context is required")) {
+            userMessage = "Please describe what your content is about.";
+          } else if (e.message.includes("not configured")) {
+            userMessage = "AI service is not configured. Contact administrator.";
+          } else if (e.message.includes("Invalid API response")) {
+            userMessage = "Received invalid response from AI service. Please try again.";
+          } else if (e.message) {
+            userMessage = e.message;
+          }
+
+          alert(userMessage);
         } finally {
           // Hide loading state
           btn.disabled = false;
@@ -1560,12 +1769,27 @@
           currentGeneratedData["content_li"] = data.content_li || "";
           currentGeneratedData["content_yt"] = data.content_yt || "";
           currentGeneratedData["title_yt"] = data.title_yt || "";
+          currentGeneratedData["image"] = data.image || null;
 
           // Render the output section (same as generateContent does)
           const outputSection = document.getElementById("outputSection");
           const grid = document.getElementById("outputsGrid");
 
+          // Clear grid and add image if available
           grid.innerHTML = "";
+
+          // Add image preview if available
+          if (data.image) {
+            const imageContainer = document.createElement("div");
+            imageContainer.style.cssText = "grid-column: 1 / -1; margin-bottom: 24px; display: flex; justify-content: center;";
+            imageContainer.innerHTML = `
+              <img src="${escapeHtml(data.image)}"
+                   alt="Generated content image"
+                   style="width: 400px; height: 400px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border);">
+            `;
+            grid.appendChild(imageContainer);
+          }
+
           copyTextRefs.clear();
           copyIndex = 0;
 

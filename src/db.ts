@@ -35,9 +35,18 @@ db.exec(`
     content_li TEXT,
     content_yt TEXT,
     title_yt TEXT,
+    image TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `);
+
+// Add image column if it doesn't exist (migration for existing databases)
+try {
+  db.query("SELECT image FROM generated_content LIMIT 1").all();
+} catch {
+  console.log("Adding image column to generated_content table...");
+  db.exec("ALTER TABLE generated_content ADD COLUMN image TEXT;");
+}
 
 // Initialize settings row if not exists
 db.exec(`
@@ -89,13 +98,14 @@ export const saveGeneratedContent = (data: {
   content_li?: string;
   content_yt?: string;
   title_yt?: string;
+  image?: string;
 }) => {
   const stmt = db.query(`
     INSERT INTO generated_content (
-      content_fb, content_ig, content_tw, content_wa, content_li, content_yt, title_yt
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      content_fb, content_ig, content_tw, content_wa, content_li, content_yt, title_yt, image
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
-  
+
   stmt.run(
     data.content_fb || "",
     data.content_ig || "",
@@ -103,7 +113,8 @@ export const saveGeneratedContent = (data: {
     data.content_wa || "",
     data.content_li || "",
     data.content_yt || "",
-    data.title_yt || ""
+    data.title_yt || "",
+    data.image || null
   );
 
   const lastId = db.query("SELECT last_insert_rowid() as id").get() as { id: number };
