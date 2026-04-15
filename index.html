@@ -1004,7 +1004,7 @@
       </div>
 
       <!-- AI GENERATE SECTION -->
-      <div class="section">
+      <div class="section" id="aiAssistSection">
         <div class="section-header">
           <span class="section-label">AI Assist</span>
           <div class="section-line"></div>
@@ -1832,6 +1832,12 @@
           });
 
           outputSection.classList.add("visible");
+
+          // Hide AI section when preloaded content is displayed
+          const aiAssistSection = document.getElementById("aiAssistSection");
+          if (aiAssistSection) {
+            aiAssistSection.style.display = "none";
+          }
 
           // Show share button
           const shareBtn = document.getElementById("btnShare");
