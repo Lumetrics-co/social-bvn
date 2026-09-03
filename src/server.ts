@@ -359,17 +359,14 @@ Create engaging, platform-specific content for each social media platform.`;
     }
   },
 
-  // Serve static files (index.html for /)
-  "GET /": () => {
-    const indexPath = join(projectRoot, "index.html");
-    if (existsSync(indexPath)) {
-      const content = readFileSync(indexPath, "utf-8");
-      return new Response(content, {
-        headers: { "Content-Type": "text/html" },
-      });
-    }
-    return Response.json({ error: "index.html not found" }, { status: 404 });
-  },
+};
+
+// Static pages served from the project root
+const staticPages: Record<string, string> = {
+  "/": "index.html",
+  "/index.html": "index.html",
+  "/seo-audit": "seo-audit.html",
+  "/seo-audit.html": "seo-audit.html",
 };
 
 // CORS headers
@@ -431,17 +428,18 @@ async function handleRequest(req: Request): Promise<Response> {
     );
   }
 
-  // Static file serving for root
-  if (method === "GET" && (path === "/" || path === "/index.html")) {
-    const response = router["GET /"]!(req);
-    const headers = new Headers(response.headers);
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      headers.set(key, value);
-    });
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
+  // Static file serving
+  const pageFile = method === "GET" ? staticPages[path] : undefined;
+  if (pageFile) {
+    const filePath = join(projectRoot, pageFile);
+    if (!existsSync(filePath)) {
+      return Response.json(
+        { error: `${pageFile} not found` },
+        { status: 404, headers: corsHeaders }
+      );
+    }
+    return new Response(readFileSync(filePath, "utf-8"), {
+      headers: { ...corsHeaders, "Content-Type": "text/html; charset=utf-8" },
     });
   }
 
@@ -460,6 +458,10 @@ API Endpoints:
   GET    /api/history      - Get generation history
   DELETE /api/history      - Clear generation history
   POST   /api/ai-generate  - Generate content with AI (Gemini)
+
+Pages:
+  /                        - CaptionForge
+  /seo-audit               - Sanava keyword audit
 `);
 
 Bun.serve({

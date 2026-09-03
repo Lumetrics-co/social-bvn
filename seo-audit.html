@@ -1,0 +1,536 @@
+<meta charset="utf-8">
+<title>Sanava Keyword Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#F3F4F7; --surface:#FFFFFF; --surface-2:#EBEEF3; --line:#DCE0E8; --line-2:#C2C8D5;
+  --ink:#141822; --ink-2:#3D4553; --muted:#6A7285;
+  --accent:#1D3F73; --accent-ink:#FFFFFF; --accent-soft:#E7ECF6; --accent-text:#1D3F73;
+  --pass:#2E7D4F; --pass-bg:#E6F2EA;
+  --fail:#A83232; --fail-bg:#FBEAE8;
+  --warn:#8A6111; --warn-bg:#F8EFDC;
+  --none:#6B7285; --none-bg:#E9ECF1;
+  --serp-link:#1A0DAB; --serp-url:#4D5156;
+  --shadow:0 1px 2px rgba(20,24,34,.05), 0 10px 26px -16px rgba(20,24,34,.3);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#0E1117; --surface:#161A22; --surface-2:#1D222C; --line:#272D39; --line-2:#3A4250;
+  --ink:#E9ECF2; --ink-2:#B9C1CF; --muted:#98A1B0;
+  --accent:#7FA8E8; --accent-ink:#0E1117; --accent-soft:#1B2637; --accent-text:#9CBDF0;
+  --pass:#5FBE86; --pass-bg:#15281F;
+  --fail:#E8837A; --fail-bg:#2C1A19;
+  --warn:#D9A441; --warn-bg:#2A2213;
+  --none:#8B93A5; --none-bg:#1F242E;
+  --serp-link:#8AB4F8; --serp-url:#9AA0A6;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 26px -16px rgba(0,0,0,.8);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1117; --surface:#161A22; --surface-2:#1D222C; --line:#272D39; --line-2:#3A4250;
+  --ink:#E9ECF2; --ink-2:#B9C1CF; --muted:#98A1B0;
+  --accent:#7FA8E8; --accent-ink:#0E1117; --accent-soft:#1B2637; --accent-text:#9CBDF0;
+  --pass:#5FBE86; --pass-bg:#15281F;
+  --fail:#E8837A; --fail-bg:#2C1A19;
+  --warn:#D9A441; --warn-bg:#2A2213;
+  --none:#8B93A5; --none-bg:#1F242E;
+  --serp-link:#8AB4F8; --serp-url:#9AA0A6;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 26px -16px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-text)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.topbar{
+  background:var(--surface); border-bottom:1px solid var(--line);
+  padding:15px 32px; display:flex; align-items:center; gap:14px;
+}
+.brand{font-family:Newsreader,Georgia,serif; font-size:21px; font-weight:600; letter-spacing:-.01em}
+.brand span{color:var(--muted); font-weight:400}
+.backlink{
+  margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:11px; text-decoration:none;
+  color:var(--muted); border:1px solid var(--line); border-radius:99px; padding:4px 11px;
+}
+.backlink:hover{color:var(--accent-text); border-color:var(--accent)}
+
+.wrap{max-width:1000px; margin:0 auto; padding:30px 32px 90px}
+
+/* 1 — picker */
+.picker{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 22px; box-shadow:var(--shadow)}
+.picker > h2{
+  margin:0 0 14px; font-size:11px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted);
+}
+.combo{position:relative}
+.comboBtn{
+  font:inherit; width:100%; cursor:pointer; text-align:left; display:flex; align-items:center; gap:12px;
+  padding:13px 16px; border-radius:10px; border:1px solid var(--line-2); background:var(--surface); color:var(--ink);
+}
+.comboBtn:hover{border-color:var(--accent)}
+.comboBtn .term{font-size:18px; font-weight:600; letter-spacing:-.01em}
+.comboBtn .vol{
+  font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums;
+  margin-left:auto; white-space:nowrap;
+}
+.comboBtn .chev{color:var(--muted); font-size:11px}
+.comboPanel{
+  position:absolute; z-index:30; top:calc(100% + 6px); left:0; right:0;
+  background:var(--surface); border:1px solid var(--line-2); border-radius:10px;
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.comboPanel input{
+  font:inherit; font-size:14px; width:100%; padding:12px 16px; border:0; border-bottom:1px solid var(--line);
+  background:var(--surface); color:var(--ink);
+}
+.comboPanel input:focus{outline:none; background:var(--accent-soft)}
+.comboPanel ul{list-style:none; margin:0; padding:6px; max-height:330px; overflow-y:auto}
+.comboPanel li{
+  display:flex; align-items:baseline; gap:12px; padding:9px 11px; border-radius:7px;
+  font-size:14px; color:var(--ink-2); cursor:pointer;
+}
+.comboPanel li em{
+  font-style:normal; margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+  color:var(--muted); font-variant-numeric:tabular-nums;
+}
+.comboPanel li:hover,.comboPanel li.active{background:var(--surface-2)}
+.comboPanel li[aria-selected="true"]{background:var(--accent); color:var(--accent-ink); font-weight:600}
+.comboPanel li[aria-selected="true"] em{color:var(--accent-ink); opacity:.8}
+.comboPanel .none{padding:14px 16px; font-size:13px; color:var(--muted); font-style:italic}
+.siblings{margin-top:18px; padding-top:15px; border-top:1px solid var(--line)}
+.siblings .lead{font-size:12.5px; color:var(--muted); margin:0 0 10px}
+.siblings .lead b{color:var(--ink-2); font-weight:600}
+.sibchips{display:flex; flex-wrap:wrap; gap:7px}
+.sibchip{
+  font:inherit; font-size:12.5px; cursor:pointer; padding:5px 11px; border-radius:99px;
+  border:1px solid var(--line-2); background:var(--surface); color:var(--ink-2);
+  display:inline-flex; align-items:baseline; gap:7px;
+}
+.sibchip:hover{border-color:var(--accent); color:var(--accent-text)}
+.sibchip em{font-style:normal; font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+.cannib{
+  margin:12px 0 0; font-size:12.5px; color:var(--warn); background:var(--warn-bg);
+  border:1px solid color-mix(in srgb, var(--warn) 40%, transparent); border-radius:8px; padding:9px 12px; max-width:72ch;
+}
+.absent{
+  margin:0 0 18px; font-size:13.5px; color:var(--ink-2); background:var(--warn-bg);
+  border:1px solid var(--warn); border-radius:10px; padding:13px 16px; max-width:78ch;
+}
+.absent b{color:var(--ink)}
+.score .reach{font-size:12.5px; color:var(--muted); width:100%; margin-top:2px}
+.score .reach b{color:var(--ink-2); font-weight:600; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+td.cov{text-align:center; font-family:"IBM Plex Mono",monospace; font-size:13px}
+td.cov.yes{color:var(--pass)} td.cov.no{color:var(--line-2)}
+th.cov{text-align:center}
+tr.self td{background:var(--accent-soft)}
+tr.self td:first-child{font-weight:600; color:var(--ink)}
+.sitestrip{
+  display:flex; flex-wrap:wrap; gap:6px 22px; margin-top:18px; padding-top:15px;
+  border-top:1px solid var(--line); font-size:12.5px; color:var(--muted);
+}
+.sitestrip b{font-family:"IBM Plex Mono",monospace; font-weight:500; color:var(--ink-2); font-variant-numeric:tabular-nums}
+
+/* headings */
+section{margin-top:38px}
+.shead{display:flex; align-items:baseline; gap:14px; margin:0 0 13px}
+.shead h3{
+  margin:0; font-family:Newsreader,Georgia,serif; font-size:22px; font-weight:500;
+  letter-spacing:-.01em; color:var(--ink);
+}
+.shead .note{font-size:12px; color:var(--muted); margin-left:auto; text-align:right; max-width:46ch; line-height:1.4}
+
+/* 2 — score */
+.score{
+  display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+  background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 24px;
+}
+.score .n{font-family:"IBM Plex Mono",monospace; font-size:38px; font-weight:500; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-.03em}
+.score .n small{font-size:15px; color:var(--muted); font-weight:400}
+.dots{display:flex; gap:5px}
+.dot{width:11px; height:11px; border-radius:3px; background:var(--none); opacity:.4}
+.dot.pass{background:var(--pass); opacity:1} .dot.fail{background:var(--fail); opacity:1}
+.score .say{font-size:14px; color:var(--ink-2); margin-left:auto; text-align:right; max-width:34ch}
+
+/* 4 — google */
+.gcard{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 24px; box-shadow:var(--shadow)}
+.gcard .u{font-family:Arial,Helvetica,sans-serif; font-size:12.5px; color:var(--serp-url); margin-bottom:4px; word-break:break-all}
+.gcard .t{font-family:Arial,Helvetica,sans-serif; font-size:20px; line-height:1.3; color:var(--serp-link); margin-bottom:5px}
+.gcard .d{font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.58; color:var(--ink-2); max-width:62ch}
+.gcard .d .over{color:var(--fail); text-decoration:line-through; text-decoration-color:color-mix(in srgb,var(--fail) 50%,transparent)}
+.gcard .none{font-style:italic; color:var(--muted)}
+.gnote{margin:14px 0 0; padding-top:13px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted); max-width:70ch}
+.gnote b{color:var(--ink-2); font-weight:600}
+
+/* tables */
+.tbl{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:660px; font-size:13.5px}
+th{
+  text-align:left; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); padding:11px 14px; border-bottom:1px solid var(--line); white-space:nowrap; background:var(--surface-2);
+}
+td{padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top}
+tr:last-child td{border-bottom:none}
+.c-tag{font-weight:600; white-space:nowrap; color:var(--ink)}
+.c-val{min-width:160px; width:30%}
+.c-len{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap; width:82px}
+.c-val .tx{color:var(--ink-2); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.c-val .tx.none{font-style:italic; color:var(--muted)}
+.c-target{font-size:12px; color:var(--muted); line-height:1.35; width:120px}
+.c-fix{font-size:12.5px; color:var(--ink-2); width:22%}
+.c-fix.ok{color:var(--muted)}
+td.mono{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+.pill{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:5px; white-space:nowrap}
+.pill.pass{background:var(--pass-bg); color:var(--pass)}
+.pill.fail{background:var(--fail-bg); color:var(--fail)}
+.pill.weak{background:var(--warn-bg); color:var(--warn)}
+.pill.missing{background:var(--none-bg); color:var(--none)}
+.pill.na{background:var(--none-bg); color:var(--none)}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{font-size:11.5px; padding:2px 9px; border-radius:99px; border:1px solid var(--line-2); color:var(--ink-2)}
+.chip.on{border-color:var(--pass); color:var(--pass); background:var(--pass-bg)}
+
+/* 7 — fixes */
+.fixes{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px}
+.fixes li{
+  display:grid; grid-template-columns:26px minmax(0,1fr); gap:12px; align-items:start;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  font-size:14px; line-height:1.5; color:var(--ink-2);
+}
+.fixes .rank{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--accent-text); font-weight:500; padding-top:2px}
+details.more{margin-top:14px}
+details.more summary{
+  cursor:pointer; font-size:12.5px; color:var(--muted); list-style:none; display:inline-flex; gap:7px; align-items:center;
+  border:1px solid var(--line); border-radius:99px; padding:6px 14px; background:var(--surface);
+}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary:hover{color:var(--accent-text); border-color:var(--accent)}
+details.more[open] summary{margin-bottom:14px}
+.morebox{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px}
+.morebox h4{margin:0 0 10px; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.morebox ul{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:7px; font-size:13px; color:var(--ink-2); line-height:1.5}
+
+/* gap */
+.gap{background:var(--warn-bg); border:1px solid var(--warn); border-radius:12px; padding:22px 24px}
+.gap h3{margin:0 0 8px; font-family:Newsreader,Georgia,serif; font-size:22px; font-weight:500; color:var(--ink)}
+.gap p{margin:0 0 14px; font-size:14px; color:var(--ink-2); max-width:66ch}
+.gap .rec{font-family:"IBM Plex Mono",monospace; font-size:13px; background:var(--surface); border:1px solid var(--line); border-radius:7px; padding:9px 13px; display:inline-block; word-break:break-all}
+
+@media (max-width:720px){
+  .wrap{padding:22px 16px 70px}
+  .topbar{padding:13px 16px}
+  .shead{flex-direction:column; gap:5px}
+  .shead .note{margin-left:0; text-align:left}
+  .score .say{margin-left:0; text-align:left}
+}
+</style>
+
+<header class="topbar">
+  <div class="brand">Sanava <span>· keyword audit</span></div>
+  <a class="backlink" id="backLink" href="/" hidden>&larr; CaptionForge</a>
+</header>
+
+<div class="wrap">
+  <div class="picker">
+    <h2>Keyword</h2>
+    <div class="combo">
+      <button class="comboBtn" id="kwBtn" aria-haspopup="listbox" aria-expanded="false">
+        <span class="term" id="kwTerm"></span><span class="vol" id="kwVol"></span><span class="chev">&#9662;</span>
+      </button>
+      <div class="comboPanel" id="kwPanel" hidden>
+        <input id="kwSearch" type="text" placeholder="Search keywords" autocomplete="off" spellcheck="false">
+        <ul id="kwList" role="listbox" aria-label="Keywords"></ul>
+      </div>
+    </div>
+    <div class="siblings" id="siblings"></div>
+    <div class="sitestrip" id="siteStrip"></div>
+  </div>
+  <div id="main"></div>
+</div>
+
+<script>
+const DATA = {"site": {"audit_date": "2026-08-31", "domain": "sanavaskincare.com", "market": "sv-se", "country": "Sweden (SEK kr)", "language": "Swedish (sv)", "storefront_url": "https://sanavaskincare.com/sv-se", "platform": "Shopify", "pages_crawled": 19, "pages_indexable": 19, "keyword_clusters": 6, "keywords_audited": 25, "total_monthly_search_volume": 19230, "sitewide_findings": {"404_errors": false, "broken_links": false, "internal_redirects": false, "duplicate_titles": false, "duplicate_meta_descriptions": false, "canonical_self_referencing_on_all_pages": true, "hreflang_tags_per_page": 53, "hreflang_x_default": "https://sanavaskincare.com/en-se", "robots_meta_blocking": false, "mobile_viewport_on_all_pages": true, "pages_missing_h1": 7, "pages_missing_meta_description": 7, "untranslated_pages_on_swedish_market": ["/collections/face-creams", "/collections/frontpage", "/blogs/news", "/blogs/skincare"], "keyword_absent_sitewide": ["ansiktskräm", "barriärkräm"], "twitter_card_type_on_all_pages": "summary (should be summary_large_image)", "twitter_description_diverges_from_og_description": true, "lighthouse_scores": "not_measured — PageSpeed Insights API quota exceeded without an API key"}, "priority_order": ["1. Translate and build out /collections/face-creams (8,100/mo head term, page is empty English boilerplate)", "2. Fix the missing-H1 bug on all 7 /pages/ templates", "3. Introduce 'ansiktskräm' and 'barriärkräm' into copy — both are absent sitewide", "4. Rewrite H1 / og:title on /products/rich-night-cream to Swedish keyword-led copy", "5. Create the sensitive-skin page (1,240/mo, zero coverage)", "6. Trim/extend the meta descriptions that miss the 150-160 window and align og:/twitter: variants", "7. Switch twitter:card to summary_large_image sitewide"]}, "pages": [{"id": 1, "keyword_cluster": "Nattkräm", "search_intent": "commercial / transactional", "page_type": "product", "keywords": [{"term": "nattkräm", "search_volume": 1000}, {"term": "nattkräm torr hy", "search_volume": 120}], "url": "https://sanavaskincare.com/sv-se/products/rich-night-cream", "page_match_rationale": "Only night-cream product on the store; title, meta description and FAQ schema already carry 'nattkräm' and 'torr'. Correct money page for the head term 'nattkräm'.", "word_count": 1243, "first_100_words_paragraph": "present", "first_100_words_sample": "Zooma Gå till 1 Gå till 2 Gå till 3 Lanseras hösten 2026 Rich Night Cream En barriärstödjande fuktkräm för hud som söker långvarig återfuktning, motståndskraft och djup komfort – samlat i en enda nattkräm Få tidig tillgång 40 g · Första upplagan, hösten 2026 · Begränsad till 500st Dermatologiskt Testad Utvecklad i Sverige 92,9 % Naturligt Ursprung Sanava Rich", "title": {"text": "Sanava Rich Night Cream | Barriärstödjande nattkräm", "length": 51, "keyword_in_title": true, "matched_keywords": ["nattkräm"], "length_in_range": true, "status": "pass", "title_rule": "The title should be between 50-65 characters and include any of the keyword."}, "description": {"text": "Sanava Rich Night Cream är en djupt närande nattkräm för torr och stram hud – med långvarig återfuktning, mjukhet och komfort samtidigt som den stödjer hudbarriären under natten.", "length": 178, "keyword_in_description": true, "matched_keywords": ["nattkräm"], "length_in_range": false, "status": "fail", "description_rule": "The description should be between 150-160 characters and include any of the keyword."}, "h1": {"text": "Rich Night Cream", "length": 16, "keyword_in_h1": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword."}, "all_h1_count": 1, "h2": {"text": "The Rich Night Cream", "length": 20, "keyword_in_h2": false, "matched_keywords": [], "length_in_range": true, "status": "fail", "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword."}, "all_h2": ["De som provade den över natten", "The Rich Night Cream", "Vanliga frågor"], "og_title": {"text": "Rich Night Cream", "length": 16, "keyword_in_og_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword."}, "og_description": {"text": "Sanava Rich Night Cream är en djupt närande nattkräm för torr och stram hud – med långvarig återfuktning, mjukhet och komfort samtidigt som den stödjer hudbarriären under natten.", "length": 178, "keyword_in_og_description": true, "matched_keywords": ["nattkräm"], "length_in_range": false, "status": "fail", "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword."}, "og_image": true, "twitter_title": {"text": "Rich Night Cream", "length": 16, "keyword_in_twitter_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword."}, "twitter_description": {"text": "Sanava Rich Night Cream är en djupt närande nattkräm för torr och stram hud – med långvarig återfuktning, mjukhet och komfort samtidigt som den stödjer hudbarriären under natten. I centrum står SLC-3™ Skin Lipid Complex, Sanavas tredelade barriärsystem, utvecklat för att tillföra lipider, hjälpa huden att bevara fukt och stödja hudens naturliga produktion av ceramider. Resultatet är en hud som känns sammetsmjuk, smidig och djupt behaglig, samtidigt som hudbarriärens motståndskraft stöds över tid. Återfuktning, barriärstöd och vård med niacinamid. En genomtänkt nattkräm – utan behov av ett separat niacinamidserum eller en längre hudvårdsrutin.", "length": 650, "keyword_in_twitter_description": true, "matched_keywords": ["nattkräm"], "length_in_range": false, "status": "fail", "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword."}, "twitter_image": true, "twitter_card": "summary", "canonical": "https://sanavaskincare.com/sv-se/products/rich-night-cream", "canonical_self_referencing": true, "hreflang_tags": 53, "img_alts": [{"img_id": 1, "alt_text": "Rich Night Cream", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image1_Webp.webp"}, {"img_id": 2, "alt_text": "Rich Night Cream", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image2_Webp.webp"}, {"img_id": 3, "alt_text": "Rich Night Cream", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image3_Webp.webp"}, {"img_id": 4, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/SLC-3_clay_transparent_1600.png"}, {"img_id": 5, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Product_Cleanse_Image.png"}, {"img_id": 6, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Product_Apply_Image.png"}, {"img_id": 7, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Product_Rest_Image.png"}, {"img_id": 8, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ChatGPT_Image_May_26_2026_02_57_57_PM.png"}, {"img_id": 9, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ingredient_niacinamide.png"}, {"img_id": 10, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ChatGPT_Image_May_26_2026_03_30_35_PM.png"}, {"img_id": 11, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Image_Aloe_Vera.png"}, {"img_id": 12, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ChatGPT_Image_May_26_2026_02_47_12_PM.png"}], "list_of_schema_markups": [{"schema_type": "Product"}, {"schema_type": "ProductGroup"}, {"schema_type": "FAQ"}, {"schema_type": "BreadcrumbList"}], "mobile_friendly": true, "page_speed": {"desktop_score": null, "mobile_score": null, "measurement_status": "not_measured", "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.", "measured_proxies": {"ttfb_seconds": 0.49, "html_download_seconds": 0.611, "html_bytes": 307115, "render_blocking_head_stylesheets": 4, "render_blocking_head_scripts": 2, "images_on_page": 98, "images_lazy_loaded": 88, "images_missing_width_height": 0}}, "404_errors": false, "broken_links": false, "redirects": false, "duplicate_content": false, "structured_data_errors": false, "internal_links": 10, "external_links": 1, "issues": ["Title is 51 characters and contains 'nattkräm' only in the subtitle half — passes length but the head keyword sits after the brand name.", "Meta description is 178 characters, 18 over the 150-160 rule; Google will truncate around 155-160.", "og:title and twitter:title are 'Rich Night Cream' (16 chars) — fail the 50-65 rule and contain no Swedish keyword.", "H1 is 'Rich Night Cream' — 16 characters, under the 20-70 rule, English, and contains no target keyword.", "No H2 contains 'nattkräm'; H2s are 'De som provade den över natten', 'The Rich Night Cream', 'Vanliga frågor'.", "9 of 12 content images have empty alt text; the 3 that are set say 'Rich Night Cream' (English, no keyword).", "Product offer schema declares availability InStock while the site states 'Lansering hösten 2026' — should be PreOrder.", "Long-tail 'nattkräm torr hy' has no dedicated H2 or section on the page.", "twitter:description is 650 characters — the full product description is dumped into the tag; X truncates near 200.", "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."], "recommendations": ["Rewrite H1 to a Swedish keyword-led phrase, e.g. 'Rich Night Cream – nattkräm för torr hy' (39 chars).", "Set og:title / twitter:title to match the SEO title: 'Nattkräm för torr hy | Sanava Rich Night Cream' padded to 50-65 chars.", "Trim meta description to 150-160 chars while keeping 'nattkräm' and 'torr' in the first 100 characters.", "Add an H2 'Nattkräm för torr och stram hy' and a supporting section to capture 'nattkräm torr hy'.", "Write Swedish alt text for all 12 content images, e.g. 'Sanava nattkräm för torr hy i burk'.", "Change schema availability to https://schema.org/PreOrder until launch, and add a releaseDate.", "Add an internal contextual link from the /sv-se homepage hero copy to this page using anchor 'nattkräm'."]}, {"id": 2, "keyword_cluster": "Torr hud", "search_intent": "informational", "page_type": "blog_article", "keywords": [{"term": "torr hud", "search_volume": 1600}, {"term": "ansiktskräm för torr hy", "search_volume": 590}, {"term": "torr hud i ansiktet", "search_volume": 590}, {"term": "ansiktskräm för torr hud", "search_volume": 390}, {"term": "torr hud ansikte kräm", "search_volume": 390}, {"term": "torr flagnande hud i ansiktet", "search_volume": 340}, {"term": "extremt torr hud ansikte", "search_volume": 210}, {"term": "torr hud ansiktet inget hjälper", "search_volume": 170}, {"term": "extremt torr hud orsak", "search_volume": 110}], "url": "https://sanavaskincare.com/sv-se/blogs/skincare/what-makes-a-good-night-cream-for-dry-skin", "page_match_rationale": "Longest and most on-topic page on the site for dry skin (1,705 words, 53 occurrences of 'torr'). H1 and title both address dry skin directly. Natural hub for the whole 'torr hud' cluster.", "word_count": 1705, "first_100_words_paragraph": "present", "first_100_words_sample": "Artikel: Vad gör en nattkräm bra för torr hud? Dela Föregående Nästa 4 juni 2026 Barrier Support Vad gör en nattkräm bra för torr hud? Torr hud beskrivs ofta för enkelt, som om den bara behövde en fetare kräm. I verkligheten signalerar hud som känns torr ofta flera behov samtidigt: mer vatten i hornlagret, en mer behaglig lipidmiljö, mindre onödig", "title": {"text": "Vad gör en nattkräm bra för torr hud? | SANAVA", "length": 46, "keyword_in_title": true, "matched_keywords": ["torr hud"], "length_in_range": false, "status": "fail", "title_rule": "The title should be between 50-65 characters and include any of the keyword."}, "description": {"text": "En vetenskapligt grundad men enkel guide till vad hud som känns torr behöver på natten: fuktbindare, mjukgörande lipider, barriärstöd, textur, tolerans och konsekvens.", "length": 167, "keyword_in_description": true, "matched_keywords": ["torr hud"], "length_in_range": false, "status": "fail", "description_rule": "The description should be between 150-160 characters and include any of the keyword."}, "h1": {"text": "Vad gör en nattkräm bra för torr hud?", "length": 37, "keyword_in_h1": true, "matched_keywords": ["torr hud"], "length_in_range": true, "status": "pass", "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword."}, "all_h1_count": 1, "h2": {"text": "Förstå hudvård för torr hud: mer än brist på fett", "length": 49, "keyword_in_h2": true, "matched_keywords": ["torr hud"], "length_in_range": true, "status": "pass", "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword."}, "all_h2": ["Förstå hudvård för torr hud: mer än brist på fett", "Den tredelade logiken bakom en avancerad nattkräm", "Varför barriärstöd inte är ett dekorativt påstående", "Utvärdera formulan: vad du bör leta efter i en rik nattkräm", "Varför kvällsrutinen förtjänar en särskild nattkräm", "Texturdilemmat: balans mellan fyllighet och tyngd", "Sanavas syn på barriärstödjande nattkräm", "Gå med i Sanava Early Access", "Läs mer"], "og_title": {"text": "Vad gör en nattkräm bra för torr hud?", "length": 37, "keyword_in_og_title": true, "matched_keywords": ["torr hud"], "length_in_range": false, "status": "fail", "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword."}, "og_description": {"text": "En vetenskapligt grundad men enkel guide till vad hud som känns torr behöver på natten: fuktbindare, mjukgörande lipider, barriärstöd, textur, tolerans och konsekvens.", "length": 167, "keyword_in_og_description": true, "matched_keywords": ["torr hud"], "length_in_range": false, "status": "fail", "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword."}, "og_image": true, "twitter_title": {"text": "Vad gör en nattkräm bra för torr hud?", "length": 37, "keyword_in_twitter_title": true, "matched_keywords": ["torr hud"], "length_in_range": false, "status": "fail", "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword."}, "twitter_description": {"text": "En bra nattkräm för torr hud ska göra mer än att bara kännas rik. Här förklarar vi hur fukt, mjukgörande lipider, barriärstöd och textur samverkar för att ge huden långvarig komfort över natten.", "length": 194, "keyword_in_twitter_description": true, "matched_keywords": ["torr hud"], "length_in_range": false, "status": "fail", "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword."}, "twitter_image": true, "twitter_card": "summary", "canonical": "https://sanavaskincare.com/sv-se/blogs/skincare/what-makes-a-good-night-cream-for-dry-skin", "canonical_self_referencing": true, "hreflang_tags": 53, "img_alts": [{"img_id": 1, "alt_text": "What Makes a Good Night Cream for Dry Skin?", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/Sanava_Good_Night_Cream_Dry_Skin_Blog_Photo_V2_95cce5a1-2f64-4372-b57a-73a26a1765c1.png"}, {"img_id": 2, "alt_text": "What Intelligent Skincare Really Means", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/blogimage_intelligent_skincare_353d5d5d-a8c2-49b5-b7a5-0d20a28c52ac.png"}, {"img_id": 3, "alt_text": "What Does Skin Barrier Support Mean?", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/blog_post_what_does_skin_barrier_support_mean_470e2c32-6e02-4deb-b88c-81eaf96c84ef.jpg"}], "list_of_schema_markups": [{"schema_type": "Article"}, {"schema_type": "WebPage"}, {"schema_type": "BreadcrumbList"}, {"schema_type": "Organization"}], "mobile_friendly": true, "page_speed": {"desktop_score": null, "mobile_score": null, "measurement_status": "not_measured", "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.", "measured_proxies": {"ttfb_seconds": 0.504, "html_download_seconds": 0.833, "html_bytes": 270774, "render_blocking_head_stylesheets": 4, "render_blocking_head_scripts": 2, "images_on_page": 86, "images_lazy_loaded": 78, "images_missing_width_height": 0}}, "404_errors": false, "broken_links": false, "redirects": false, "duplicate_content": false, "structured_data_errors": false, "internal_links": 13, "external_links": 3, "issues": ["Title is 46 characters — 4 short of the 50-65 rule.", "Meta description is 167 characters, 7 over the rule.", "Body says 'torr hud' but never 'ansiktskräm' — the word appears 0 times on the entire Swedish site, so 'ansiktskräm för torr hy' (590) and 'ansiktskräm för torr hud' (390) cannot rank.", "No section addresses the high-intent long tails 'torr hud ansiktet inget hjälper' (170), 'extremt torr hud orsak' (110) or 'torr flagnande hud i ansiktet' (340).", "All 3 content images use English alt text ('What Makes a Good Night Cream for Dry Skin?') with no Swedish keyword.", "og:description is 184 characters, 24 over the rule.", "Article schema is present but the page has no FAQPage schema despite the cluster being question-led.", "twitter:description (194 chars) is a different string from og:description (167 chars) — two divergent snippets to maintain.", "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."], "recommendations": ["Extend title to 50-65 chars: 'Vad gör en nattkräm bra för torr hud? | Guide 2026' or add 'torr hy'.", "Trim meta description to 150-160 chars.", "Add H2 sections targeting: 'Ansiktskräm för torr hy – vad du bör titta efter', 'Torr flagnande hud i ansiktet', 'Extremt torr hud i ansiktet: vanliga orsaker', 'Torr hud i ansiktet och inget hjälper'.", "Introduce 'ansiktskräm' as a synonym throughout this article and the product page — it is currently absent sitewide.", "Translate image alt text to Swedish and include 'torr hud' / 'torr hy'.", "Add FAQPage schema for the 'inget hjälper' and 'orsak' questions to compete for People Also Ask.", "Link contextually from this article to /sv-se/products/rich-night-cream with anchor 'ansiktskräm för torr hy'."]}, {"id": 3, "keyword_cluster": "Ansiktskräm", "search_intent": "commercial", "page_type": "collection", "keywords": [{"term": "ansiktskräm", "search_volume": 8100}, {"term": "återfuktande ansiktskräm", "search_volume": 1000}, {"term": "ansiktskräm för känslig hy", "search_volume": 390}, {"term": "fuktgivande ansiktskräm", "search_volume": 170}], "url": "https://sanavaskincare.com/sv-se/collections/face-creams", "page_match_rationale": "The only category page that could hold the 'ansiktskräm' head term (8,100/mo). Currently the weakest page on the site: untranslated and empty of SEO metadata.", "word_count": 242, "first_100_words_paragraph": "absent", "first_100_words_sample": "Hem Butik Face Creams Face Creams Filtrera Sortera efter Sortera efter Utvald Mest relevant Bästsäljare Alfabetiskt, A–Ö Alfabetiskt, Ö–A Pris, lågt till högt Pris, högt till lågt Datum, gammalt till nytt Datum, nytt till gammalt 1 produkt Filtrera Tillgänglighet Endast produkter i lager Pris krSEK till krSEK Tillämpa Tillgänglighet Endast produkter i lager Pris krSEK till krSEK Välj alternativ Rich", "title": {"text": "Face Creams", "length": 11, "keyword_in_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "title_rule": "The title should be between 50-65 characters and include any of the keyword."}, "description": {"text": null, "length": 0, "keyword_in_description": false, "matched_keywords": [], "length_in_range": false, "status": "missing", "description_rule": "The description should be between 150-160 characters and include any of the keyword."}, "h1": {"text": "Face Creams", "length": 11, "keyword_in_h1": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword."}, "all_h1_count": 1, "h2": {"text": null, "length": 0, "keyword_in_h2": false, "matched_keywords": [], "length_in_range": false, "status": "missing", "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword."}, "all_h2": [], "og_title": {"text": "Face Creams", "length": 11, "keyword_in_og_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword."}, "og_description": {"text": null, "length": 0, "keyword_in_og_description": false, "matched_keywords": [], "length_in_range": false, "status": "missing", "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword."}, "og_image": true, "twitter_title": {"text": "Face Creams", "length": 11, "keyword_in_twitter_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword."}, "twitter_description": {"text": null, "length": 0, "keyword_in_twitter_description": false, "matched_keywords": [], "length_in_range": false, "status": "missing", "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword."}, "twitter_image": true, "twitter_card": "summary", "canonical": "https://sanavaskincare.com/sv-se/collections/face-creams", "canonical_self_referencing": true, "hreflang_tags": 53, "img_alts": [{"img_id": 1, "alt_text": "Rich Night Cream", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image1_Webp.webp"}, {"img_id": 2, "alt_text": "Rich Night Cream", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image2_Webp.webp"}], "list_of_schema_markups": [{"schema_type": "BreadcrumbList"}], "mobile_friendly": true, "page_speed": {"desktop_score": null, "mobile_score": null, "measurement_status": "not_measured", "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.", "measured_proxies": {"ttfb_seconds": 0.499, "html_download_seconds": 0.825, "html_bytes": 258574, "render_blocking_head_stylesheets": 4, "render_blocking_head_scripts": 2, "images_on_page": 85, "images_lazy_loaded": 79, "images_missing_width_height": 0}}, "404_errors": false, "broken_links": false, "redirects": false, "duplicate_content": false, "structured_data_errors": false, "internal_links": 13, "external_links": 1, "issues": ["CRITICAL: page is not translated — title, H1 and og:title are all 'Face Creams' (English) on the Swedish storefront.", "Title is 11 characters against a 50-65 rule and contains no target keyword.", "Meta description is missing entirely; og:description and twitter:description are also absent.", "H1 'Face Creams' is 11 characters, below the 20-70 rule, and contains no keyword.", "No H2 headings on the page at all.", "Only 242 words of content — no category copy, no buying guide, no intro paragraph.", "'ansiktskräm' appears 0 times on this page and 0 times across the entire Swedish site, despite the cluster being worth 9,660 searches/month.", "Only CollectionPage-level schema is BreadcrumbList; no ItemList / CollectionPage markup.", "Collection URL handle is English ('face-creams') on a Swedish-language market.", "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."], "recommendations": ["Translate the collection: title 'Ansiktskräm för torr och känslig hy | Sanava' padded to 50-65 chars.", "Write a 150-160 char Swedish meta description containing 'ansiktskräm' and 'återfuktande'.", "Set H1 to 'Återfuktande ansiktskräm för torr hy' (35 chars).", "Add 300-500 words of category copy with H2s: 'Vad gör en bra återfuktande ansiktskräm?', 'Fuktgivande ansiktskräm för känslig hy'.", "Add ItemList schema and populate og:/twitter: description from the new meta description.", "Consider a Swedish URL handle (/collections/ansiktskram) with a 301 from the current handle.", "This is the single highest-leverage fix in the audit: 8,100/mo head term with a page that currently says nothing."]}, {"id": 4, "keyword_cluster": "Känslig hud", "search_intent": "informational / commercial", "page_type": "none_content_gap", "keywords": [{"term": "känslig hud", "search_volume": 590}, {"term": "hudvård för känslig hy", "search_volume": 270}, {"term": "ansiktskräm för torr och känslig hy", "search_volume": 200}, {"term": "ansiktskräm för känslig hud", "search_volume": 180}], "url": "", "page_match_rationale": "No page on the Swedish storefront targets sensitive skin. 'känslig' appears only as an incidental mention (2-6 times) on 7 pages, always inside broader copy — no title, H1, H2 or meta description anywhere contains it.", "page_status": "no_matching_page_content_gap", "word_count": 0, "first_100_words_paragraph": "absent", "title": null, "description": null, "h1": null, "h2": null, "og_title": null, "og_description": null, "og_image": false, "twitter_title": null, "twitter_description": null, "twitter_image": false, "img_alts": [], "list_of_schema_markups": [], "mobile_friendly": null, "page_speed": null, "404_errors": null, "broken_links": null, "redirects": null, "duplicate_content": null, "structured_data_errors": null, "internal_links": 0, "external_links": 0, "issues": ["Content gap: 1,240 searches/month with no matching page.", "Closest existing coverage is a single product FAQ answer ('Är den säker för känslig hud?') and 2 passing mentions on /pages/intelligent-skincare.", "Two of the four terms also need the word 'ansiktskräm', which does not exist anywhere on the Swedish site."], "recommendations": ["Create /sv-se/blogs/skincare/hudvard-for-kanslig-hy targeting 'hudvård för känslig hy' and 'känslig hud' (1,200+ words).", "Create or repurpose a commercial landing page for 'ansiktskräm för känslig hy' — this term also sits in the Ansiktskräm cluster, so a single collection page can serve both.", "Until then, add an H2 'Ansiktskräm för torr och känslig hy' to /sv-se/products/rich-night-cream and surface the existing sensitive-skin FAQ answer above the fold.", "Add FAQPage schema on the new page for 'Vilken ansiktskräm passar känslig hy?'."], "closest_existing_pages": ["https://sanavaskincare.com/sv-se/products/rich-night-cream", "https://sanavaskincare.com/sv-se/pages/intelligent-skincare"], "recommended_url": "https://sanavaskincare.com/sv-se/blogs/skincare/hudvard-for-kanslig-hy"}, {"id": 5, "keyword_cluster": "Hudbarriär", "search_intent": "informational", "page_type": "blog_article", "keywords": [{"term": "skadad hudbarriär", "search_volume": 320}, {"term": "barriärkräm ansikte", "search_volume": 170}, {"term": "hudbarriär", "search_volume": 140}], "url": "https://sanavaskincare.com/sv-se/blogs/skincare/what-does-skin-barrier-support-mean", "page_match_rationale": "Deepest barrier content on the site (1,817 words, 25 occurrences of 'hudbarriär'), with H1 and title both on-topic. /pages/slc-3-skin-lipid-complex is the commercial companion for the same cluster.", "word_count": 1817, "first_100_words_paragraph": "present", "first_100_words_sample": "Artikel: Vad innebär det att stödja hudbarriären? Dela Föregående 25 juni 2026 Barrier Support Vad innebär det att stödja hudbarriären? Att stödja hudbarriären innebär att hjälpa hudens yttersta lager att upprätthålla de förutsättningar det behöver för att fungera väl: en balanserad fuktnivå, flexibla hudceller och en välorganiserad lipidmiljö. I praktiken är det resultatet av hur en formula är utformad, hur", "title": {"text": "Att stödja hudbarriären: Vad det egentligen innebär | Sanava", "length": 60, "keyword_in_title": true, "matched_keywords": ["hudbarriär"], "length_in_range": true, "status": "pass", "title_rule": "The title should be between 50-65 characters and include any of the keyword."}, "description": {"text": "Vad barriärstöd egentligen innebär: hur hornlagret, hudens lipider, TEWL och fuktkrämens utformning samverkar för att bidra till långvarig komfort.", "length": 147, "keyword_in_description": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "description_rule": "The description should be between 150-160 characters and include any of the keyword."}, "h1": {"text": "Vad innebär det att stödja hudbarriären?", "length": 40, "keyword_in_h1": true, "matched_keywords": ["hudbarriär"], "length_in_range": true, "status": "pass", "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword."}, "all_h1_count": 1, "h2": {"text": "Hudbarriären är en selektiv gräns, inte en försegling", "length": 53, "keyword_in_h2": true, "matched_keywords": ["hudbarriär"], "length_in_range": true, "status": "pass", "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword."}, "all_h2": ["Hudbarriären är en selektiv gräns, inte en försegling", "TEWL är användbart – men förenklas ofta", "En fuktkräm kan påverka hudbarriären på flera sätt", "Varför ingredienslistan bara berättar en del av historien", "Barriärstöd är inte samma sak som barriärreparation", "Rutinen är lika viktig som fuktkrämen", "Varför miljön spelar roll i Sverige och Norden", "Sanavas synsätt", "Bli en del av det första kapitlet", "Läs mer"], "og_title": {"text": "Vad innebär det att stödja hudbarriären?", "length": 40, "keyword_in_og_title": true, "matched_keywords": ["hudbarriär"], "length_in_range": false, "status": "fail", "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword."}, "og_description": {"text": "Vad barriärstöd egentligen innebär: hur hornlagret, hudens lipider, TEWL och fuktkrämens utformning samverkar för att bidra till långvarig komfort.", "length": 147, "keyword_in_og_description": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword."}, "og_image": true, "twitter_title": {"text": "Vad innebär det att stödja hudbarriären?", "length": 40, "keyword_in_twitter_title": true, "matched_keywords": ["hudbarriär"], "length_in_range": false, "status": "fail", "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword."}, "twitter_description": {"text": "Barriärstöd handlar om mer än återfuktning eller en enskild stjärningrediens. Lär dig hur hudens lipider, vattenförlust och fuktkrämens utformning samverkar – och vad trovärdig barriärvård faktiskt bör göra.", "length": 207, "keyword_in_twitter_description": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword."}, "twitter_image": true, "twitter_card": "summary", "canonical": "https://sanavaskincare.com/sv-se/blogs/skincare/what-does-skin-barrier-support-mean", "canonical_self_referencing": true, "hreflang_tags": 53, "img_alts": [{"img_id": 1, "alt_text": "What Does Skin Barrier Support Mean?", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/blog_post_what_does_skin_barrier_support_mean_470e2c32-6e02-4deb-b88c-81eaf96c84ef.jpg"}, {"img_id": 2, "alt_text": "What Makes a Good Night Cream for Dry Skin?", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "weak", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/Sanava_Good_Night_Cream_Dry_Skin_Blog_Photo_V2_95cce5a1-2f64-4372-b57a-73a26a1765c1.png"}], "list_of_schema_markups": [{"schema_type": "Article"}, {"schema_type": "WebPage"}, {"schema_type": "BreadcrumbList"}, {"schema_type": "Organization"}], "mobile_friendly": true, "page_speed": {"desktop_score": null, "mobile_score": null, "measurement_status": "not_measured", "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.", "measured_proxies": {"ttfb_seconds": 0.491, "html_download_seconds": 0.862, "html_bytes": 272229, "render_blocking_head_stylesheets": 4, "render_blocking_head_scripts": 2, "images_on_page": 85, "images_lazy_loaded": 78, "images_missing_width_height": 0}}, "404_errors": false, "broken_links": false, "redirects": false, "duplicate_content": false, "structured_data_errors": false, "internal_links": 11, "external_links": 3, "issues": ["Neither the title, H1 nor any H2 contains 'skadad hudbarriär' (320/mo, the largest term in the cluster).", "'barriärkräm' (170/mo) appears 0 times on the page and 0 times sitewide.", "Meta description is 147 characters — 3 short of the 150-160 rule.", "og:title (40 chars) and twitter:title differ from the SEO title and fall below the 50-65 rule.", "Both content images use English alt text with no Swedish keyword.", "No FAQPage schema on a page whose whole cluster is question-shaped.", "Meta description says 'barriärstöd' but never 'hudbarriär' — the exact head term is missing from the snippet.", "twitter:description (207 chars) diverges from og:description (147 chars).", "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."], "recommendations": ["Add an H2 'Skadad hudbarriär: tecken och vad du kan göra' and 250-350 words under it to capture the 320/mo term.", "Introduce 'barriärkräm' as a synonym in the copy and in one H2 ('Barriärkräm för ansiktet – vad den faktiskt gör').", "Extend meta description to 150-160 chars.", "Align og:title / twitter:title with the 60-char SEO title.", "Swedish alt text on both images, e.g. 'Illustration av hudbarriären och dess lipider'.", "Add FAQPage schema and cross-link to /sv-se/pages/slc-3-skin-lipid-complex with anchor 'barriärstöd'."], "secondary_url": "https://sanavaskincare.com/sv-se/pages/slc-3-skin-lipid-complex", "secondary_url_note": "Commercial companion page for the same cluster: title 60 chars and on-keyword, but it has NO H1 element at all."}, {"id": 6, "keyword_cluster": "Hudvård", "search_intent": "informational / brand", "page_type": "brand_page", "keywords": [{"term": "hudvård för torr hy", "search_volume": 280}, {"term": "svensk hudvård", "search_volume": 210}, {"term": "svenska hudvårdsmärken", "search_volume": 140}], "url": "https://sanavaskincare.com/sv-se/pages/about-sanava", "page_match_rationale": "Brand page is the natural target for 'svensk hudvård' and 'svenska hudvårdsmärken' — its meta description already positions Sanava as 'ett svenskt hudvårdsvarumärke'. 'hudvård för torr hy' is better served by the Torr hud article (id 2).", "word_count": 376, "first_100_words_paragraph": "absent", "first_100_words_sample": "Vår Berättelse Sanava skapades ur en enkel men genomtänkt övertygelse: att hudvård ska stödja huden på lång sikt, inte överbelasta den i stunden. I en kategori som ofta präglas av överflöd — fler steg, starkare löften, snabbare resultat — erbjuder intelligent hudvård ett mer medvetet förhållningssätt. Den respekterar hudens komplexitet samtidigt som den skapar klarhet i den dagliga rutinen. I", "title": {"text": "Om SANAVA", "length": 9, "keyword_in_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "title_rule": "The title should be between 50-65 characters and include any of the keyword."}, "description": {"text": "Upptäck SANAVA, ett svenskt hudvårdsvarumärke som skapar färre, bättre och mer målmedvetna formuleringar — vägledda av hudens behov, barriärstöd och långsiktig hudhälsa.", "length": 169, "keyword_in_description": true, "matched_keywords": ["svensk hudvård"], "length_in_range": false, "status": "fail", "description_rule": "The description should be between 150-160 characters and include any of the keyword."}, "h1": {"text": null, "length": 0, "keyword_in_h1": false, "matched_keywords": [], "length_in_range": false, "status": "missing", "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword."}, "all_h1_count": 0, "h2": {"text": null, "length": 0, "keyword_in_h2": false, "matched_keywords": [], "length_in_range": false, "status": "missing", "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword."}, "all_h2": [], "og_title": {"text": "Om SANAVA", "length": 9, "keyword_in_og_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword."}, "og_description": {"text": "Upptäck SANAVA, ett svenskt hudvårdsvarumärke som skapar färre, bättre och mer målmedvetna formuleringar — vägledda av hudens behov, barriärstöd och långsiktig hudhälsa.", "length": 169, "keyword_in_og_description": true, "matched_keywords": ["svensk hudvård"], "length_in_range": false, "status": "fail", "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword."}, "og_image": true, "twitter_title": {"text": "Om SANAVA", "length": 9, "keyword_in_twitter_title": false, "matched_keywords": [], "length_in_range": false, "status": "fail", "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword."}, "twitter_description": {"text": "Upptäck SANAVA, ett svenskt hudvårdsvarumärke som skapar färre, bättre och mer målmedvetna formuleringar — vägledda av hudens behov, barriärstöd och långsiktig hudhälsa.", "length": 169, "keyword_in_twitter_description": true, "matched_keywords": ["svensk hudvård"], "length_in_range": false, "status": "fail", "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword."}, "twitter_image": true, "twitter_card": "summary", "canonical": "https://sanavaskincare.com/sv-se/pages/about-sanava", "canonical_self_referencing": true, "hreflang_tags": 53, "img_alts": [{"img_id": 1, "alt_text": "", "keyword_in_alt_text": false, "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.", "status": "missing", "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/brandstory_image1_desktop.png"}], "list_of_schema_markups": [{"schema_type": "BreadcrumbList"}], "mobile_friendly": true, "page_speed": {"desktop_score": null, "mobile_score": null, "measurement_status": "not_measured", "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.", "measured_proxies": {"ttfb_seconds": 0.414, "html_download_seconds": 0.584, "html_bytes": 237053, "render_blocking_head_stylesheets": 4, "render_blocking_head_scripts": 2, "images_on_page": 84, "images_lazy_loaded": 78, "images_missing_width_height": 0}}, "404_errors": false, "broken_links": false, "redirects": false, "duplicate_content": false, "structured_data_errors": false, "internal_links": 9, "external_links": 1, "issues": ["Page has NO H1 element — this is true of all 7 /pages/ templates on the site (about-sanava, our-philosophy, founder-story, contact, founders-circle, intelligent-skincare, slc-3-skin-lipid-complex).", "Page has no H2 headings either — there is no heading structure at all.", "Title 'Om SANAVA' is 9 characters against a 50-65 rule and contains no keyword.", "og:title and twitter:title inherit the same 9-character value.", "Meta description is 169 characters, 9 over the rule.", "Only 376 words of content.", "The one content image on the page (brandstory_image1_desktop.png) has empty alt text.", "No Organization schema on the brand page itself (it exists only on the homepage), and no BreadcrumbList beyond the default.", "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."], "recommendations": ["Add H1 'Svensk hudvård byggd på hudens behov' (35 chars) — and fix the missing-H1 template bug across all /pages/.", "Rewrite title to 'Om Sanava | Svensk hudvård för långsiktig hudhälsa' (50 chars).", "Add H2s: 'Svenska hudvårdsmärken med ett annat synsätt', 'Hudvård för torr hy'.", "Trim meta description to 150-160 chars and mirror it into og:/twitter: description.", "Expand to 800+ words with founder, formulation and sourcing detail to support the brand queries.", "Add Organization schema (with sameAs to Instagram) on this page.", "Add Swedish alt text to the brand-story image."]}]};
+
+const RANGES = { title:[50,65], description:[150,160], h1:[20,70], h2:[20,70],
+  og_title:[50,65], og_description:[150,160], twitter_title:[50,65], twitter_description:[150,160] };
+const LABELS = { title:"Title", description:"Description", h1:"H1 heading", h2:"First H2",
+  og_title:"Share title", og_description:"Share description",
+  twitter_title:"X title", twitter_description:"X description" };
+const CLIP = 160;
+
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num = n => Number(n).toLocaleString("en-US");
+
+const index = [];
+DATA.pages.forEach(p => (p.keywords || []).forEach(k => index.push({ term:k.term, volume:k.search_volume, page:p })));
+index.sort((a, b) => b.volume - a.volume);
+let current = index[0].term;
+
+/* picker */
+const btn = document.getElementById("kwBtn"), panel = document.getElementById("kwPanel");
+const search = document.getElementById("kwSearch"), list = document.getElementById("kwList");
+let active = 0;
+
+function paintList() {
+  const q = search.value.trim().toLowerCase();
+  const hits = index.filter(k => k.term.toLowerCase().includes(q));
+  active = Math.min(active, Math.max(hits.length - 1, 0));
+  list.innerHTML = hits.length
+    ? hits.map((k, i) => `<li role="option" data-term="${esc(k.term)}" aria-selected="${k.term === current}"
+        class="${i === active ? "active" : ""}">${esc(k.term)}<em>${num(k.volume)}</em></li>`).join("")
+    : `<li class="none">No keyword matches “${esc(search.value)}”</li>`;
+}
+function openPanel() {
+  panel.hidden = false; btn.setAttribute("aria-expanded", "true");
+  search.value = ""; active = 0; paintList(); search.focus();
+}
+function closePanel() { panel.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+
+btn.addEventListener("click", () => (panel.hidden ? openPanel() : closePanel()));
+search.addEventListener("input", () => { active = 0; paintList(); });
+search.addEventListener("keydown", e => {
+  const items = [...list.querySelectorAll("li[data-term]")];
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    active = Math.max(0, Math.min(items.length - 1, active + (e.key === "ArrowDown" ? 1 : -1)));
+    paintList();
+    list.querySelector("li.active")?.scrollIntoView({ block: "nearest" });
+  } else if (e.key === "Enter" && items[active]) {
+    e.preventDefault(); current = items[active].dataset.term; closePanel(); render();
+  } else if (e.key === "Escape") { closePanel(); btn.focus(); }
+});
+document.addEventListener("click", e => {
+  if (!panel.hidden && !e.target.closest(".combo")) closePanel();
+});
+
+const s = DATA.site;
+document.getElementById("siteStrip").innerHTML = [
+  ["site", s.domain], ["market", s.market], ["pages crawled", num(s.pages_crawled)],
+  ["indexable", num(s.pages_indexable)], ["clusters", num(s.keyword_clusters)],
+  ["keywords", num(s.keywords_audited)], ["searches", num(s.total_monthly_search_volume) + "/mo"],
+  ["audited", s.audit_date]
+].map(([k, v]) => `<span>${esc(k)} <b>${esc(v)}</b></span>`).join("");
+
+/* fix text derived from the rule the field failed */
+function fixFor(key, obj, page) {
+  if (!obj || obj.status === "pass") return ["—", true];
+  const [lo, hi] = RANGES[key];
+  const head = (page.keywords || []).slice().sort((a, b) => b.search_volume - a.search_volume)[0];
+  const headTerm = head ? head.term : "";
+  if (!obj.text) return [`Write one, ${lo}–${hi} chars, using “${headTerm}”`, false];
+  const bits = [];
+  if (obj.length < lo) bits.push(`extend to ${lo}–${hi} chars`);
+  else if (obj.length > hi) bits.push(`trim to ${lo}–${hi} chars`);
+  const missing = (page.keywords || []).filter(k => !(obj.matched_keywords || []).includes(k.term));
+  if (missing.length === (page.keywords || []).length) bits.push(`add “${headTerm}”`);
+  else if (missing.length) bits.push(`covers ${(page.keywords || []).length - missing.length} of ${(page.keywords || []).length} keywords`);
+  return [bits.length ? bits.join(" · ") : "align with the rule", false];
+}
+/* "hy" and "hud" are the same word to a searcher — used to spot two pages chasing one query */
+const normalise = t => t.toLowerCase().replace(/\bhy\b/g, "hud").replace(/\bför\b/g, "").replace(/\s+/g, " ").trim();
+const clash = {};
+index.forEach(k => (clash[normalise(k.term)] = clash[normalise(k.term)] || []).push(k));
+
+function clip(text, limit) {
+  const t = String(text || "");
+  return t.length <= limit ? esc(t) : esc(t.slice(0, limit)) + `<span class="over">${esc(t.slice(limit))}</span>`;
+}
+
+function render() {
+  const entry = index.find(k => k.term === current), p = entry.page;
+  document.getElementById("kwTerm").textContent = entry.term;
+  document.getElementById("kwVol").textContent = num(entry.volume) + " searches / mo";
+
+  const family = p.keywords || [], reach = family.reduce((n, k) => n + k.search_volume, 0);
+  const sibs = family.filter(k => k.term !== current);
+  const rival = (clash[normalise(entry.term)] || []).find(k => k.term !== entry.term && k.page !== p);
+  document.getElementById("siblings").innerHTML = `
+    <p class="lead">${p.url
+      ? `The same page answers <b>${family.length} keywords</b> worth <b>${num(reach)} searches a month</b>. Fix it once, all of them move.`
+      : `This gap covers <b>${family.length} keywords</b> worth <b>${num(reach)} searches a month</b>.`}</p>
+    ${sibs.length ? `<div class="sibchips">${sibs.map(k =>
+      `<button class="sibchip" data-term="${esc(k.term)}">${esc(k.term)}<em>${num(k.search_volume)}</em></button>`).join("")}</div>` : ""}
+    ${rival ? `<p class="cannib">“${esc(rival.term)}” (${num(rival.volume)}/mo) is the same query in different words, but it is mapped to another page. Two pages chasing one search compete with each other — decide which one owns it.</p>` : ""}`;
+
+  /* content gap */
+  if (!p.url) {
+    document.getElementById("main").innerHTML = `
+      <section><div class="gap">
+        <h3>No page targets “${esc(entry.term)}”</h3>
+        <p>${esc(num(entry.volume))} searches a month with nothing on the site to answer them. Nothing to audit until a page exists.</p>
+        <p style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Build this</p>
+        <div class="rec">${esc(p.recommended_url)}</div>
+      </div></section>
+      <section>
+        <div class="shead"><h3>Fix these</h3></div>
+        <ul class="fixes">${(p.recommendations || []).slice(0, 3).map((r, i) =>
+          `<li><span class="rank">${i + 1}</span><span>${esc(r)}</span></li>`).join("")}</ul>
+        ${moreBlock(p, 3)}
+      </section>`;
+    window.scrollTo({ top: 0, behavior: "instant" });
+    return;
+  }
+
+  const keys = Object.keys(RANGES).filter(k => p[k]);
+  const stats = keys.map(k => p[k].status);
+  const passes = stats.filter(x => x === "pass").length;
+  const alts = p.img_alts || [], altSet = alts.filter(a => a.alt_text).length;
+  const headTerm = (family.slice().sort((a, b) => b.search_volume - a.search_volume)[0] || {}).term || entry.term;
+  const urlParts = p.url.replace("https://", "").split("/");
+
+  let html = "";
+
+  /* 2 — score */
+  html += `<section>
+    <div class="shead"><h3>Page score</h3><span class="note">One score for the page, shared by all ${family.length} keywords on it.</span></div>
+    <div class="score">
+      <div class="n">${passes}<small> / ${stats.length}</small></div>
+      <div class="dots">${stats.map(x => `<span class="dot ${x}" title="${esc(x)}"></span>`).join("")}</div>
+      <div class="say">${passes === stats.length ? "Every tag passes." :
+        `${stats.length - passes} of ${stats.length} tags need work on <a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(urlParts.slice(1).join("/"))}</a>`}</div>
+      <div class="reach">Fixing this page affects <b>${family.length}</b> keywords and <b>${num(reach)}</b> searches a month.</div>
+    </div>
+  </section>`;
+
+  /* selected keyword nowhere on the page */
+  const covFields = ["title", "description", "h1", "h2"];
+  const seen = f => ((p[f] || {}).matched_keywords || []).includes(entry.term);
+  if (!covFields.some(seen)) {
+    html += `<p class="absent"><b>“${esc(entry.term)}” appears in none of this page’s tags.</b> The page is mapped here as the best home for it, but nothing on it currently targets the phrase.</p>`;
+  }
+
+  /* coverage matrix */
+  html += `<section>
+    <div class="shead"><h3>Keyword coverage</h3><span class="note">Which of the page’s keywords actually appear in each tag.</span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Keyword</th><th>Volume</th>
+        ${covFields.map(f => `<th class="cov">${esc(LABELS[f].replace(" heading", "").replace("First ", ""))}</th>`).join("")}</tr></thead>
+      <tbody>${family.slice().sort((a, b) => b.search_volume - a.search_volume).map(k => `<tr class="${k.term === current ? "self" : ""}">
+        <td>${esc(k.term)}</td>
+        <td class="mono">${num(k.search_volume)}</td>
+        ${covFields.map(f => {
+          const hit = ((p[f] || {}).matched_keywords || []).includes(k.term);
+          return `<td class="cov ${hit ? "yes" : "no"}">${hit ? "&check;" : "&middot;"}</td>`;
+        }).join("")}
+      </tr>`).join("")}</tbody>
+    </table></div>
+  </section>`;
+
+  /* 4 — google */
+  html += `<section>
+    <div class="shead"><h3>How this page looks in Google</h3></div>
+    <div class="gcard">
+      <div class="u">${esc(urlParts.slice(0, 4).join(" › "))}</div>
+      <div class="t">${p.title.text ? esc(p.title.text) : "—"}</div>
+      <div class="d">${p.description.text ? clip(p.description.text, CLIP)
+        : `<span class="none">No description written — Google will pick its own text from the page.</span>`}</div>
+      <p class="gnote"><b>This is the SERP listing</b> — what a customer sees before they click. Google cuts the grey text at roughly ${CLIP} characters; anything struck through never gets read.</p>
+    </div>
+  </section>`;
+
+  /* 5 — tags */
+  html += `<section>
+    <div class="shead"><h3>Tag check</h3><span class="note">The text Google and social platforms read. Each has a length window and should contain the keyword.</span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Tag</th><th>Value</th><th>Length</th><th>Target</th><th>Status</th><th>Fix</th></tr></thead>
+      <tbody>${keys.map(k => {
+        const o = p[k], [lo, hi] = RANGES[k], [fix, ok] = fixFor(k, o, p);
+        return `<tr>
+          <td class="c-tag">${esc(LABELS[k])}</td>
+          <td class="c-val"><span class="tx ${o.text ? "" : "none"}">${o.text ? esc(o.text) : "not set"}</span></td>
+          <td class="c-len">${o.text ? o.length + " chars" : "—"}</td>
+          <td class="c-target">${lo}–${hi} chars<br>must contain keyword</td>
+          <td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td>
+          <td class="c-fix ${ok ? "ok" : ""}">${fix === "—" ? "—" : esc(fix)}</td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table></div>
+  </section>`;
+
+  /* 6 — images */
+  html += `<section>
+    <div class="shead"><h3>Images</h3><span class="note">Alt text is what Google and screen readers see instead of the picture.</span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>File</th><th>Alt text</th><th>Status</th><th>Fix</th></tr></thead>
+      <tbody>${alts.map(a => `<tr>
+        <td class="mono">${a.img_id}</td>
+        <td class="mono" title="${esc(a.img_url)}">${esc(String(a.img_url).split("/").pop())}</td>
+        <td class="c-val"><span class="tx ${a.alt_text ? "" : "none"}">${a.alt_text ? esc(a.alt_text) : "empty"}</span></td>
+        <td><span class="pill ${esc(a.status)}">${esc(a.status)}</span></td>
+        <td class="c-fix">${a.alt_text ? `Rewrite in Swedish with “${esc(headTerm)}”` : `Add Swedish alt with “${esc(headTerm)}”`}</td>
+      </tr>`).join("")}</tbody>
+    </table></div>
+    <p style="margin:10px 2px 0;font-size:12.5px;color:var(--muted)">${altSet} of ${alts.length} images have alt text.</p>
+  </section>`;
+
+  /* 8 — tech */
+  const mp = (p.page_speed || {}).measured_proxies || {};
+  const errs = [["404s", p["404_errors"]], ["broken links", p.broken_links], ["redirects", p.redirects],
+                ["duplicate content", p.duplicate_content], ["schema errors", p.structured_data_errors]];
+  const bad = errs.filter(([, v]) => v);
+  const techRows = [
+    ["Structured data", (p.list_of_schema_markups || []).length
+      ? `<div class="chips">${p.list_of_schema_markups.map(x => `<span class="chip on">${esc(x.schema_type)}</span>`).join("")}</div>`
+      : `<span class="tx none">none</span>`,
+      (p.list_of_schema_markups || []).length ? "pass" : "missing"],
+    ["Mobile", p.mobile_friendly ? "Usable on mobile" : "Not mobile friendly", p.mobile_friendly ? "pass" : "fail"],
+    ["Page speed", "Not measured — Google's API refused the request", "na"],
+    ["Server response", `${mp.ttfb_seconds}s to first byte · ${Math.round(mp.html_bytes / 1024)} KB of HTML`, mp.ttfb_seconds < 0.8 ? "pass" : "weak"],
+    ["Render-blocking", `${mp.render_blocking_head_stylesheets} stylesheets · ${mp.render_blocking_head_scripts} scripts`, "weak"],
+    ["Images", `${mp.images_on_page} on page · ${mp.images_lazy_loaded} lazy-loaded`, "pass"],
+    ["Canonical", p.canonical_self_referencing ? "Points at itself, correct" : "Not self-referencing", p.canonical_self_referencing ? "pass" : "fail"],
+    ["Languages", `${p.hreflang_tags} hreflang tags`, "pass"],
+    ["Errors", bad.length ? `Found: ${bad.map(([k]) => k).join(", ")}` : "None found", bad.length ? "fail" : "pass"]
+  ];
+  html += `<section>
+    <div class="shead"><h3>Tech</h3><span class="note">Everything that isn't words on the page.</span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Check</th><th>Value</th><th>Status</th></tr></thead>
+      <tbody>${techRows.map(([k, v, st]) => `<tr>
+        <td class="c-tag">${esc(k)}</td><td class="c-val">${v}</td>
+        <td><span class="pill ${st}">${st === "na" ? "n/a" : st}</span></td>
+      </tr>`).join("")}</tbody>
+    </table></div>
+  </section>`;
+
+  /* 7 — fixes */
+  html += `<section>
+    <div class="shead"><h3>Fix these</h3><span class="note">Ordered by what moves the needle first.</span></div>
+    <ul class="fixes">${(p.recommendations || []).slice(0, 3).map((r, i) =>
+      `<li><span class="rank">${i + 1}</span><span>${esc(r)}</span></li>`).join("")}</ul>
+    ${moreBlock(p, 3)}
+  </section>`;
+
+  document.getElementById("main").innerHTML = html;
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function moreBlock(p, shown) {
+  const rest = (p.recommendations || []).slice(shown), issues = p.issues || [];
+  if (!rest.length && !issues.length) return "";
+  return `<details class="more">
+    <summary>Show all ${issues.length} issues and ${rest.length} more fixes</summary>
+    <div class="morebox">
+      ${issues.length ? `<div><h4>Issues found</h4><ul>${issues.map(i => `<li>${esc(i)}</li>`).join("")}</ul></div>` : ""}
+      ${rest.length ? `<div><h4>Remaining fixes</h4><ul>${rest.map(i => `<li>${esc(i)}</li>`).join("")}</ul></div>` : ""}
+    </div>
+  </details>`;
+}
+
+document.getElementById("siblings").addEventListener("click", e => {
+  const t = e.target.closest("[data-term]");
+  if (!t) return;
+  current = t.dataset.term; render();
+});
+list.addEventListener("click", e => {
+  const t = e.target.closest("[data-term]");
+  if (!t) return;
+  current = t.dataset.term; closePanel(); render();
+});
+if (["localhost", "127.0.0.1"].includes(location.hostname)) document.getElementById("backLink").hidden = false;
+render();
+</script>

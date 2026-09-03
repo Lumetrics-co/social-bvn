@@ -86,6 +86,25 @@
         border-radius: 20px;
       }
 
+      .header-link {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        text-decoration: none;
+        border: 1px solid var(--border);
+        padding: 5px 12px;
+        border-radius: 20px;
+        transition: color 0.15s, border-color 0.15s;
+      }
+
+      .header-link:hover,
+      .header-link:focus-visible {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
       .header-right {
         display: flex;
         align-items: center;
@@ -841,6 +860,7 @@
         >
           CLEAR SAVED
         </button>
+        <a class="header-link" href="/seo-audit">SEO Audit</a>
         <div class="header-tag">v1.0 · 6 Platforms</div>
       </div>
     </header>
