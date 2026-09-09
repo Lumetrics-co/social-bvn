@@ -1,4 +1,8 @@
-import { getSettings, updateSettings, saveGeneratedContent, getGeneratedHistory, clearGeneratedHistory, getGeneratedContentById } from "./db";
+import {
+  getSettings, updateSettings, saveGeneratedContent, getGeneratedHistory, clearGeneratedHistory,
+  getGeneratedContentById, getSeoAudit, getLatestAuditRow, getPagesForGeneration,
+  saveTagRecommendation, saveImageRecommendation, markRecommendationsGenerated,
+} from "./db";
 import { readFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -56,6 +60,51 @@ interface ValidationResult {
 
 // Required fields in the response
 const REQUIRED_FIELDS = ["desc_fb", "desc_ig", "desc_tw", "desc_wa", "desc_li", "desc_yt", "title_yt"];
+
+// Character-count windows per tag, mirroring RANGES in seo-audit.html
+const TAG_RANGES: Record<string, [number, number]> = {
+  title: [50, 65], description: [150, 160], h1: [20, 70], h2: [20, 70],
+  og_title: [50, 65], og_description: [150, 160], twitter_title: [50, 65], twitter_description: [150, 160],
+};
+
+// Recommendation copy generation uses the same GEMINI_API_KEY but a different
+// model/endpoint than /api/ai-generate above — gemini-2.5-flash, matching the
+// working setup already used for Gemini calls in the crawler-be project.
+const RECOMMENDATION_GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+
+// Calls Gemini with a JSON response schema and returns the parsed object.
+// Throws on any failure — callers decide how to handle a bad page/item.
+async function callGeminiJSON(prompt: string, responseSchema: any): Promise<any> {
+  if (!GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY not configured");
+  }
+  const requestBody = {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.95,
+      maxOutputTokens: 8000,
+      responseMimeType: "application/json",
+      responseJsonSchema: responseSchema,
+    },
+  };
+  const geminiResponse = await fetch(`${RECOMMENDATION_GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(requestBody),
+  });
+  if (!geminiResponse.ok) {
+    const errorText = await geminiResponse.text();
+    throw new Error(`Gemini API error: ${errorText.slice(0, 300)}`);
+  }
+  const geminiData = (await geminiResponse.json()) as GeminiResponse;
+  const generatedText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!generatedText) {
+    throw new Error("Gemini returned an empty response");
+  }
+  return JSON.parse(generatedText);
+}
 
 // Validate Gemini API response structure and content
 function validateGeminiResponse(data: any): ValidationResult {
@@ -182,6 +231,105 @@ const router: Record<string, (req: Request) => Response | Promise<Response>> = {
   "DELETE /api/history": () => {
     clearGeneratedHistory();
     return Response.json({ success: true });
+  },
+
+  // GET /api/seo-audit - Fetch the latest SEO audit dataset (site + pages)
+  "GET /api/seo-audit": () => {
+    const audit = getSeoAudit();
+    if (!audit) {
+      return Response.json({ error: "No SEO audit data found" }, { status: 404 });
+    }
+    return Response.json(audit);
+  },
+
+  // POST /api/seo-audit/generate-recommendations - LLM-write replacement copy, once
+  "POST /api/seo-audit/generate-recommendations": async () => {
+    const audit = getLatestAuditRow();
+    if (!audit) {
+      return Response.json({ error: "No SEO audit data found" }, { status: 404 });
+    }
+    if (audit.recommendations_generated_at) {
+      return Response.json({
+        alreadyGenerated: true,
+        recommendations_generated_at: audit.recommendations_generated_at,
+      });
+    }
+    if (!GEMINI_API_KEY) {
+      return Response.json({ error: "GEMINI_API_KEY not configured" }, { status: 500 });
+    }
+
+    const pages = getPagesForGeneration(audit.id);
+    let pagesGenerated = 0;
+    const pagesFailed: number[] = [];
+
+    for (const page of pages) {
+      try {
+        const properties: Record<string, any> = {};
+        const required: string[] = [];
+
+        for (const tag of page.failingTags) {
+          const [lo, hi] = TAG_RANGES[tag.tag_key] || [20, 160];
+          properties[tag.tag_key] = {
+            type: "string",
+            description: `Replacement ${tag.tag_key.replace(/_/g, " ")} in Swedish, ${lo}-${hi} characters, must naturally include one of the target keywords. Current value: ${tag.text ? `"${tag.text}"` : "not set"}.`,
+          };
+          required.push(tag.tag_key);
+        }
+        if (page.failingImages.length) {
+          properties.images = {
+            type: "array",
+            description: "One entry per image listed in the prompt, matched by img_id, with Swedish alt text under 100 characters that naturally mentions a target keyword.",
+            items: {
+              type: "object",
+              properties: { img_id: { type: "integer" }, alt_text: { type: "string" } },
+              required: ["img_id", "alt_text"],
+            },
+          };
+          required.push("images");
+        }
+
+        const keywordList = page.keywords.map((k) => `${k.term} (${k.volume}/mo)`).join(", ");
+        const prompt = `You are an SEO copywriter for Sanava, a Swedish skincare brand focused on barrier-support, dermatologically-tested skincare.
+Page: ${page.url}
+Target keywords for this page: ${keywordList}
+
+Write replacement copy for the fields in the response schema. Rules:
+- Swedish only.
+- Fit the character range given for each field as closely as possible.
+- Naturally include at least one target keyword per field — do not just repeat the keyword, write real sentences.
+- Match a premium Swedish skincare brand voice.
+${page.failingImages.length ? `\nImages needing alt text:\n${page.failingImages.map((img) => `- img_id ${img.img_id}: ${img.img_url.split("/").pop()}`).join("\n")}` : ""}`;
+
+        const result = await callGeminiJSON(prompt, { type: "object", properties, required });
+
+        for (const tag of page.failingTags) {
+          const text = result[tag.tag_key];
+          if (typeof text === "string" && text.trim()) {
+            saveTagRecommendation(page.pageId, tag.tag_key, text.trim());
+          }
+        }
+        if (Array.isArray(result.images)) {
+          for (const img of page.failingImages) {
+            const match = result.images.find((r: any) => r.img_id === img.img_id);
+            if (match && typeof match.alt_text === "string" && match.alt_text.trim()) {
+              saveImageRecommendation(img.id, match.alt_text.trim());
+            }
+          }
+        }
+        pagesGenerated++;
+      } catch (err) {
+        console.error(`Failed to generate recommendations for page ${page.pageId}:`, err);
+        pagesFailed.push(page.sourcePageId ?? page.pageId);
+      }
+    }
+
+    markRecommendationsGenerated(audit.id);
+
+    return Response.json({
+      success: true,
+      pages_generated: pagesGenerated,
+      pages_failed: pagesFailed,
+    });
   },
 
   // POST /api/ai-generate - Generate content using Gemini AI
@@ -458,6 +606,8 @@ API Endpoints:
   GET    /api/history      - Get generation history
   DELETE /api/history      - Clear generation history
   POST   /api/ai-generate  - Generate content with AI (Gemini)
+  GET    /api/seo-audit    - Get SEO audit dataset (site + pages)
+  POST   /api/seo-audit/generate-recommendations - LLM-write replacement copy, once
 
 Pages:
   /                        - CaptionForge

@@ -1,0 +1,1267 @@
+{
+  "site": {
+    "audit_date": "2026-08-31",
+    "domain": "sanavaskincare.com",
+    "market": "sv-se",
+    "country": "Sweden (SEK kr)",
+    "language": "Swedish (sv)",
+    "storefront_url": "https://sanavaskincare.com/sv-se",
+    "platform": "Shopify",
+    "pages_crawled": 19,
+    "pages_indexable": 19,
+    "keyword_clusters": 6,
+    "keywords_audited": 25,
+    "total_monthly_search_volume": 19230,
+    "sitewide_findings": {
+      "404_errors": false,
+      "broken_links": false,
+      "internal_redirects": false,
+      "duplicate_titles": false,
+      "duplicate_meta_descriptions": false,
+      "canonical_self_referencing_on_all_pages": true,
+      "hreflang_tags_per_page": 53,
+      "hreflang_x_default": "https://sanavaskincare.com/en-se",
+      "robots_meta_blocking": false,
+      "mobile_viewport_on_all_pages": true,
+      "pages_missing_h1": 7,
+      "pages_missing_meta_description": 7,
+      "untranslated_pages_on_swedish_market": [
+        "/collections/face-creams",
+        "/collections/frontpage",
+        "/blogs/news",
+        "/blogs/skincare"
+      ],
+      "keyword_absent_sitewide": [
+        "ansiktskräm",
+        "barriärkräm"
+      ],
+      "twitter_card_type_on_all_pages": "summary (should be summary_large_image)",
+      "twitter_description_diverges_from_og_description": true,
+      "lighthouse_scores": "not_measured — PageSpeed Insights API quota exceeded without an API key"
+    },
+    "priority_order": [
+      "1. Translate and build out /collections/face-creams (8,100/mo head term, page is empty English boilerplate)",
+      "2. Fix the missing-H1 bug on all 7 /pages/ templates",
+      "3. Introduce 'ansiktskräm' and 'barriärkräm' into copy — both are absent sitewide",
+      "4. Rewrite H1 / og:title on /products/rich-night-cream to Swedish keyword-led copy",
+      "5. Create the sensitive-skin page (1,240/mo, zero coverage)",
+      "6. Trim/extend the meta descriptions that miss the 150-160 window and align og:/twitter: variants",
+      "7. Switch twitter:card to summary_large_image sitewide"
+    ],
+    "recommendations_generated_at": "2026-09-09 18:04:12"
+  },
+  "pages": [
+    {
+      "id": 1,
+      "keyword_cluster": "Nattkräm",
+      "search_intent": "commercial / transactional",
+      "page_type": "product",
+      "url": "https://sanavaskincare.com/sv-se/products/rich-night-cream",
+      "page_match_rationale": "Only night-cream product on the store; title, meta description and FAQ schema already carry 'nattkräm' and 'torr'. Correct money page for the head term 'nattkräm'.",
+      "page_status": null,
+      "word_count": 1243,
+      "first_100_words_paragraph": "present",
+      "first_100_words_sample": "Zooma Gå till 1 Gå till 2 Gå till 3 Lanseras hösten 2026 Rich Night Cream En barriärstödjande fuktkräm för hud som söker långvarig återfuktning, motståndskraft och djup komfort – samlat i en enda nattkräm Få tidig tillgång 40 g · Första upplagan, hösten 2026 · Begränsad till 500st Dermatologiskt Testad Utvecklad i Sverige 92,9 % Naturligt Ursprung Sanava Rich",
+      "keywords": [
+        {
+          "term": "nattkräm",
+          "search_volume": 1000
+        },
+        {
+          "term": "nattkräm torr hy",
+          "search_volume": 120
+        }
+      ],
+      "title": {
+        "text": "Sanava Rich Night Cream | Barriärstödjande nattkräm",
+        "length": 51,
+        "keyword_in_title": true,
+        "matched_keywords": [
+          "nattkräm"
+        ],
+        "length_in_range": true,
+        "status": "pass",
+        "title_rule": "The title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": null
+      },
+      "description": {
+        "text": "Sanava Rich Night Cream är en djupt närande nattkräm för torr och stram hud – med långvarig återfuktning, mjukhet och komfort samtidigt som den stödjer hudbarriären under natten.",
+        "length": 178,
+        "keyword_in_description": true,
+        "matched_keywords": [
+          "nattkräm"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "description_rule": "The description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Sanava Rich Night Cream är en rik och närande nattkräm för torr hy, framtagen för att återfukta djupt, mjukgöra huden och stödja hudbarriären natten igenom."
+      },
+      "h1": {
+        "text": "Rich Night Cream",
+        "length": 16,
+        "keyword_in_h1": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": "Rich Night Cream – nattkräm för torr hy"
+      },
+      "h2": {
+        "text": "The Rich Night Cream",
+        "length": 20,
+        "keyword_in_h2": false,
+        "matched_keywords": [],
+        "length_in_range": true,
+        "status": "fail",
+        "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": "En rik nattkräm som lugnar torr, stram hud"
+      },
+      "og_title": {
+        "text": "Rich Night Cream",
+        "length": 16,
+        "keyword_in_og_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Sanava Rich Night Cream – Närande Nattkräm för Torr Hy"
+      },
+      "og_description": {
+        "text": "Sanava Rich Night Cream är en djupt närande nattkräm för torr och stram hud – med långvarig återfuktning, mjukhet och komfort samtidigt som den stödjer hudbarriären under natten.",
+        "length": 178,
+        "keyword_in_og_description": true,
+        "matched_keywords": [
+          "nattkräm"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Upptäck Rich Night Cream, en näringsrik nattkräm för torr hy som ger långvarig återfuktning, mjukhet och komfort medan hudbarriären stärks under natten."
+      },
+      "twitter_title": {
+        "text": "Rich Night Cream",
+        "length": 16,
+        "keyword_in_twitter_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Rich Night Cream by Sanava – En Nattkräm för Torr Hy"
+      },
+      "twitter_description": {
+        "text": "Sanava Rich Night Cream är en djupt närande nattkräm för torr och stram hud – med långvarig återfuktning, mjukhet och komfort samtidigt som den stödjer hudbarriären under natten. I centrum står SLC-3™ Skin Lipid Complex, Sanavas tredelade barriärsystem, utvecklat för att tillföra lipider, hjälpa huden att bevara fukt och stödja hudens naturliga produktion av ceramider. Resultatet är en hud som känns sammetsmjuk, smidig och djupt behaglig, samtidigt som hudbarriärens motståndskraft stöds över tid. Återfuktning, barriärstöd och vård med niacinamid. En genomtänkt nattkräm – utan behov av ett separat niacinamidserum eller en längre hudvårdsrutin.",
+        "length": 650,
+        "keyword_in_twitter_description": true,
+        "matched_keywords": [
+          "nattkräm"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Sanava Rich Night Cream är en nattkräm för torr hy med SLC-3™ Skin Lipid Complex – återfuktning, mjukhet och barriärstöd i en enda kräm, natt efter natt."
+      },
+      "all_h1_count": 1,
+      "all_h2": [
+        "De som provade den över natten",
+        "The Rich Night Cream",
+        "Vanliga frågor"
+      ],
+      "og_image": true,
+      "twitter_image": true,
+      "twitter_card": "summary",
+      "canonical": "https://sanavaskincare.com/sv-se/products/rich-night-cream",
+      "canonical_self_referencing": true,
+      "hreflang_tags": 53,
+      "img_alts": [
+        {
+          "img_id": 1,
+          "alt_text": "Rich Night Cream",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image1_Webp.webp",
+          "recommended_alt_text": "Sanava Rich Night Cream, nattkräm för torr hy, i sin förpackning"
+        },
+        {
+          "img_id": 2,
+          "alt_text": "Rich Night Cream",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image2_Webp.webp",
+          "recommended_alt_text": "Rich Night Cream nattkräm appliceras på huden"
+        },
+        {
+          "img_id": 3,
+          "alt_text": "Rich Night Cream",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image3_Webp.webp",
+          "recommended_alt_text": "Närbild på Sanava Rich Night Cream, en näringsrik nattkräm"
+        },
+        {
+          "img_id": 4,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/SLC-3_clay_transparent_1600.png",
+          "recommended_alt_text": "Illustration av SLC-3™ Skin Lipid Complex i nattkrämen"
+        },
+        {
+          "img_id": 5,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Product_Cleanse_Image.png",
+          "recommended_alt_text": "Steg 1: Rengör huden innan du använder nattkrämen"
+        },
+        {
+          "img_id": 6,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Product_Apply_Image.png",
+          "recommended_alt_text": "Steg 2: Applicera Rich Night Cream som nattkräm"
+        },
+        {
+          "img_id": 7,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Product_Rest_Image.png",
+          "recommended_alt_text": "Steg 3: Låt nattkrämen verka under natten"
+        },
+        {
+          "img_id": 8,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ChatGPT_Image_May_26_2026_02_57_57_PM.png",
+          "recommended_alt_text": "Torr hy som återfuktas av Sanavas nattkräm"
+        },
+        {
+          "img_id": 9,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ingredient_niacinamide.png",
+          "recommended_alt_text": "Niacinamid, en av ingredienserna i denna nattkräm"
+        },
+        {
+          "img_id": 10,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ChatGPT_Image_May_26_2026_03_30_35_PM.png",
+          "recommended_alt_text": "Hudbarriären stärks natt efter natt med nattkräm"
+        },
+        {
+          "img_id": 11,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Image_Aloe_Vera.png",
+          "recommended_alt_text": "Aloe vera, lugnande ingrediens i Sanavas nattkräm"
+        },
+        {
+          "img_id": 12,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/ChatGPT_Image_May_26_2026_02_47_12_PM.png",
+          "recommended_alt_text": "Mjuk och återfuktad hud efter användning av nattkräm"
+        }
+      ],
+      "list_of_schema_markups": [
+        {
+          "schema_type": "Product"
+        },
+        {
+          "schema_type": "ProductGroup"
+        },
+        {
+          "schema_type": "FAQ"
+        },
+        {
+          "schema_type": "BreadcrumbList"
+        }
+      ],
+      "mobile_friendly": true,
+      "page_speed": {
+        "desktop_score": null,
+        "mobile_score": null,
+        "measurement_status": "not_measured",
+        "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.",
+        "measured_proxies": {
+          "ttfb_seconds": 0.49,
+          "html_download_seconds": 0.611,
+          "html_bytes": 307115,
+          "render_blocking_head_stylesheets": 4,
+          "render_blocking_head_scripts": 2,
+          "images_on_page": 98,
+          "images_lazy_loaded": 88,
+          "images_missing_width_height": 0
+        }
+      },
+      "404_errors": false,
+      "broken_links": false,
+      "redirects": false,
+      "duplicate_content": false,
+      "structured_data_errors": false,
+      "internal_links": 10,
+      "external_links": 1,
+      "issues": [
+        "Title is 51 characters and contains 'nattkräm' only in the subtitle half — passes length but the head keyword sits after the brand name.",
+        "Meta description is 178 characters, 18 over the 150-160 rule; Google will truncate around 155-160.",
+        "og:title and twitter:title are 'Rich Night Cream' (16 chars) — fail the 50-65 rule and contain no Swedish keyword.",
+        "H1 is 'Rich Night Cream' — 16 characters, under the 20-70 rule, English, and contains no target keyword.",
+        "No H2 contains 'nattkräm'; H2s are 'De som provade den över natten', 'The Rich Night Cream', 'Vanliga frågor'.",
+        "9 of 12 content images have empty alt text; the 3 that are set say 'Rich Night Cream' (English, no keyword).",
+        "Product offer schema declares availability InStock while the site states 'Lansering hösten 2026' — should be PreOrder.",
+        "Long-tail 'nattkräm torr hy' has no dedicated H2 or section on the page.",
+        "twitter:description is 650 characters — the full product description is dumped into the tag; X truncates near 200.",
+        "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."
+      ],
+      "recommendations": [
+        "Rewrite H1 to a Swedish keyword-led phrase, e.g. 'Rich Night Cream – nattkräm för torr hy' (39 chars).",
+        "Set og:title / twitter:title to match the SEO title: 'Nattkräm för torr hy | Sanava Rich Night Cream' padded to 50-65 chars.",
+        "Trim meta description to 150-160 chars while keeping 'nattkräm' and 'torr' in the first 100 characters.",
+        "Add an H2 'Nattkräm för torr och stram hy' and a supporting section to capture 'nattkräm torr hy'.",
+        "Write Swedish alt text for all 12 content images, e.g. 'Sanava nattkräm för torr hy i burk'.",
+        "Change schema availability to https://schema.org/PreOrder until launch, and add a releaseDate.",
+        "Add an internal contextual link from the /sv-se homepage hero copy to this page using anchor 'nattkräm'."
+      ],
+      "recommended_url": null,
+      "secondary_url": null,
+      "secondary_url_note": null
+    },
+    {
+      "id": 2,
+      "keyword_cluster": "Torr hud",
+      "search_intent": "informational",
+      "page_type": "blog_article",
+      "url": "https://sanavaskincare.com/sv-se/blogs/skincare/what-makes-a-good-night-cream-for-dry-skin",
+      "page_match_rationale": "Longest and most on-topic page on the site for dry skin (1,705 words, 53 occurrences of 'torr'). H1 and title both address dry skin directly. Natural hub for the whole 'torr hud' cluster.",
+      "page_status": null,
+      "word_count": 1705,
+      "first_100_words_paragraph": "present",
+      "first_100_words_sample": "Artikel: Vad gör en nattkräm bra för torr hud? Dela Föregående Nästa 4 juni 2026 Barrier Support Vad gör en nattkräm bra för torr hud? Torr hud beskrivs ofta för enkelt, som om den bara behövde en fetare kräm. I verkligheten signalerar hud som känns torr ofta flera behov samtidigt: mer vatten i hornlagret, en mer behaglig lipidmiljö, mindre onödig",
+      "keywords": [
+        {
+          "term": "torr hud",
+          "search_volume": 1600
+        },
+        {
+          "term": "ansiktskräm för torr hy",
+          "search_volume": 590
+        },
+        {
+          "term": "torr hud i ansiktet",
+          "search_volume": 590
+        },
+        {
+          "term": "ansiktskräm för torr hud",
+          "search_volume": 390
+        },
+        {
+          "term": "torr hud ansikte kräm",
+          "search_volume": 390
+        },
+        {
+          "term": "torr flagnande hud i ansiktet",
+          "search_volume": 340
+        },
+        {
+          "term": "extremt torr hud ansikte",
+          "search_volume": 210
+        },
+        {
+          "term": "torr hud ansiktet inget hjälper",
+          "search_volume": 170
+        },
+        {
+          "term": "extremt torr hud orsak",
+          "search_volume": 110
+        }
+      ],
+      "title": {
+        "text": "Vad gör en nattkräm bra för torr hud? | SANAVA",
+        "length": 46,
+        "keyword_in_title": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "title_rule": "The title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Så väljer du rätt ansiktskräm för torr hud i ansiktet"
+      },
+      "description": {
+        "text": "En vetenskapligt grundad men enkel guide till vad hud som känns torr behöver på natten: fuktbindare, mjukgörande lipider, barriärstöd, textur, tolerans och konsekvens.",
+        "length": 167,
+        "keyword_in_description": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "description_rule": "The description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Torr hud i ansiktet behöver mer än fukt. Här förklarar vi hur fuktbindare, mjukgörande lipider och barriärstöd samverkar i en bra ansiktskräm för torr hud."
+      },
+      "h1": {
+        "text": "Vad gör en nattkräm bra för torr hud?",
+        "length": 37,
+        "keyword_in_h1": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": true,
+        "status": "pass",
+        "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": null
+      },
+      "h2": {
+        "text": "Förstå hudvård för torr hud: mer än brist på fett",
+        "length": 49,
+        "keyword_in_h2": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": true,
+        "status": "pass",
+        "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": null
+      },
+      "og_title": {
+        "text": "Vad gör en nattkräm bra för torr hud?",
+        "length": 37,
+        "keyword_in_og_title": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Så kan en bra ansiktskräm för torr hud stödja huden bättre"
+      },
+      "og_description": {
+        "text": "En vetenskapligt grundad men enkel guide till vad hud som känns torr behöver på natten: fuktbindare, mjukgörande lipider, barriärstöd, textur, tolerans och konsekvens.",
+        "length": 167,
+        "keyword_in_og_description": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "En vetenskapligt grundad guide till torr hud i ansiktet: vad fuktbindare, lipider och barriärstöd gör för en bra ansiktskräm för torr hud, natt efter natt."
+      },
+      "twitter_title": {
+        "text": "Vad gör en nattkräm bra för torr hud?",
+        "length": 37,
+        "keyword_in_twitter_title": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Detta gör en bra ansiktskräm för torr hud i praktiken"
+      },
+      "twitter_description": {
+        "text": "En bra nattkräm för torr hud ska göra mer än att bara kännas rik. Här förklarar vi hur fukt, mjukgörande lipider, barriärstöd och textur samverkar för att ge huden långvarig komfort över natten.",
+        "length": 194,
+        "keyword_in_twitter_description": true,
+        "matched_keywords": [
+          "torr hud"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Torr, flagnande hud i ansiktet behöver rätt kombination av fukt, lipider och barriärstöd. Vi förklarar hur en bra ansiktskräm för torr hud faktiskt fungerar."
+      },
+      "all_h1_count": 1,
+      "all_h2": [
+        "Förstå hudvård för torr hud: mer än brist på fett",
+        "Den tredelade logiken bakom en avancerad nattkräm",
+        "Varför barriärstöd inte är ett dekorativt påstående",
+        "Utvärdera formulan: vad du bör leta efter i en rik nattkräm",
+        "Varför kvällsrutinen förtjänar en särskild nattkräm",
+        "Texturdilemmat: balans mellan fyllighet och tyngd",
+        "Sanavas syn på barriärstödjande nattkräm",
+        "Gå med i Sanava Early Access",
+        "Läs mer"
+      ],
+      "og_image": true,
+      "twitter_image": true,
+      "twitter_card": "summary",
+      "canonical": "https://sanavaskincare.com/sv-se/blogs/skincare/what-makes-a-good-night-cream-for-dry-skin",
+      "canonical_self_referencing": true,
+      "hreflang_tags": 53,
+      "img_alts": [
+        {
+          "img_id": 1,
+          "alt_text": "What Makes a Good Night Cream for Dry Skin?",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/Sanava_Good_Night_Cream_Dry_Skin_Blog_Photo_V2_95cce5a1-2f64-4372-b57a-73a26a1765c1.png",
+          "recommended_alt_text": "Vad gör en nattkräm bra för torr hud i ansiktet"
+        },
+        {
+          "img_id": 2,
+          "alt_text": "What Intelligent Skincare Really Means",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/blogimage_intelligent_skincare_353d5d5d-a8c2-49b5-b7a5-0d20a28c52ac.png",
+          "recommended_alt_text": "Intelligent hudvård för torr hud – så fungerar den"
+        },
+        {
+          "img_id": 3,
+          "alt_text": "What Does Skin Barrier Support Mean?",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/blog_post_what_does_skin_barrier_support_mean_470e2c32-6e02-4deb-b88c-81eaf96c84ef.jpg",
+          "recommended_alt_text": "Vad innebär barriärstöd för hud som känns torr"
+        }
+      ],
+      "list_of_schema_markups": [
+        {
+          "schema_type": "Article"
+        },
+        {
+          "schema_type": "WebPage"
+        },
+        {
+          "schema_type": "BreadcrumbList"
+        },
+        {
+          "schema_type": "Organization"
+        }
+      ],
+      "mobile_friendly": true,
+      "page_speed": {
+        "desktop_score": null,
+        "mobile_score": null,
+        "measurement_status": "not_measured",
+        "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.",
+        "measured_proxies": {
+          "ttfb_seconds": 0.504,
+          "html_download_seconds": 0.833,
+          "html_bytes": 270774,
+          "render_blocking_head_stylesheets": 4,
+          "render_blocking_head_scripts": 2,
+          "images_on_page": 86,
+          "images_lazy_loaded": 78,
+          "images_missing_width_height": 0
+        }
+      },
+      "404_errors": false,
+      "broken_links": false,
+      "redirects": false,
+      "duplicate_content": false,
+      "structured_data_errors": false,
+      "internal_links": 13,
+      "external_links": 3,
+      "issues": [
+        "Title is 46 characters — 4 short of the 50-65 rule.",
+        "Meta description is 167 characters, 7 over the rule.",
+        "Body says 'torr hud' but never 'ansiktskräm' — the word appears 0 times on the entire Swedish site, so 'ansiktskräm för torr hy' (590) and 'ansiktskräm för torr hud' (390) cannot rank.",
+        "No section addresses the high-intent long tails 'torr hud ansiktet inget hjälper' (170), 'extremt torr hud orsak' (110) or 'torr flagnande hud i ansiktet' (340).",
+        "All 3 content images use English alt text ('What Makes a Good Night Cream for Dry Skin?') with no Swedish keyword.",
+        "og:description is 184 characters, 24 over the rule.",
+        "Article schema is present but the page has no FAQPage schema despite the cluster being question-led.",
+        "twitter:description (194 chars) is a different string from og:description (167 chars) — two divergent snippets to maintain.",
+        "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."
+      ],
+      "recommendations": [
+        "Extend title to 50-65 chars: 'Vad gör en nattkräm bra för torr hud? | Guide 2026' or add 'torr hy'.",
+        "Trim meta description to 150-160 chars.",
+        "Add H2 sections targeting: 'Ansiktskräm för torr hy – vad du bör titta efter', 'Torr flagnande hud i ansiktet', 'Extremt torr hud i ansiktet: vanliga orsaker', 'Torr hud i ansiktet och inget hjälper'.",
+        "Introduce 'ansiktskräm' as a synonym throughout this article and the product page — it is currently absent sitewide.",
+        "Translate image alt text to Swedish and include 'torr hud' / 'torr hy'.",
+        "Add FAQPage schema for the 'inget hjälper' and 'orsak' questions to compete for People Also Ask.",
+        "Link contextually from this article to /sv-se/products/rich-night-cream with anchor 'ansiktskräm för torr hy'."
+      ],
+      "recommended_url": null,
+      "secondary_url": null,
+      "secondary_url_note": null
+    },
+    {
+      "id": 3,
+      "keyword_cluster": "Ansiktskräm",
+      "search_intent": "commercial",
+      "page_type": "collection",
+      "url": "https://sanavaskincare.com/sv-se/collections/face-creams",
+      "page_match_rationale": "The only category page that could hold the 'ansiktskräm' head term (8,100/mo). Currently the weakest page on the site: untranslated and empty of SEO metadata.",
+      "page_status": null,
+      "word_count": 242,
+      "first_100_words_paragraph": "absent",
+      "first_100_words_sample": "Hem Butik Face Creams Face Creams Filtrera Sortera efter Sortera efter Utvald Mest relevant Bästsäljare Alfabetiskt, A–Ö Alfabetiskt, Ö–A Pris, lågt till högt Pris, högt till lågt Datum, gammalt till nytt Datum, nytt till gammalt 1 produkt Filtrera Tillgänglighet Endast produkter i lager Pris krSEK till krSEK Tillämpa Tillgänglighet Endast produkter i lager Pris krSEK till krSEK Välj alternativ Rich",
+      "keywords": [
+        {
+          "term": "ansiktskräm",
+          "search_volume": 8100
+        },
+        {
+          "term": "återfuktande ansiktskräm",
+          "search_volume": 1000
+        },
+        {
+          "term": "ansiktskräm för känslig hy",
+          "search_volume": 390
+        },
+        {
+          "term": "fuktgivande ansiktskräm",
+          "search_volume": 170
+        }
+      ],
+      "title": {
+        "text": "Face Creams",
+        "length": 11,
+        "keyword_in_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "title_rule": "The title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Ansiktskräm från Sanava – Återfuktande Hudvård för Alla"
+      },
+      "description": {
+        "text": null,
+        "length": 0,
+        "keyword_in_description": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "missing",
+        "description_rule": "The description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Upptäck Sanavas ansiktskräm, framtagen för att återfukta djupt och stödja hudbarriären. En fuktgivande ansiktskräm för alla hudtyper, inklusive känslig hy."
+      },
+      "h1": {
+        "text": "Face Creams",
+        "length": 11,
+        "keyword_in_h1": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": "Ansiktskräm för torr och känslig hy"
+      },
+      "h2": {
+        "text": null,
+        "length": 0,
+        "keyword_in_h2": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "missing",
+        "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": "Återfuktande ansiktskräm som stödjer hudbarriären"
+      },
+      "og_title": {
+        "text": "Face Creams",
+        "length": 11,
+        "keyword_in_og_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Sanava Ansiktskräm – Återfuktande & Barriärstödjande"
+      },
+      "og_description": {
+        "text": null,
+        "length": 0,
+        "keyword_in_og_description": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "missing",
+        "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Sanavas ansiktskräm ger långvarig återfuktning och stödjer hudbarriären naturligt. Upptäck en fuktgivande ansiktskräm som passar även den mest känsliga hy."
+      },
+      "twitter_title": {
+        "text": "Face Creams",
+        "length": 11,
+        "keyword_in_twitter_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Ansiktskräm från Sanava – För Torr Hud & Känslig Hy"
+      },
+      "twitter_description": {
+        "text": null,
+        "length": 0,
+        "keyword_in_twitter_description": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "missing",
+        "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Utforska Sanavas kollektion av ansiktskräm – återfuktande, fuktgivande formler noga framtagna för att stödja hudbarriären, även för dig med känslig hy."
+      },
+      "all_h1_count": 1,
+      "all_h2": [],
+      "og_image": true,
+      "twitter_image": true,
+      "twitter_card": "summary",
+      "canonical": "https://sanavaskincare.com/sv-se/collections/face-creams",
+      "canonical_self_referencing": true,
+      "hreflang_tags": 53,
+      "img_alts": [
+        {
+          "img_id": 1,
+          "alt_text": "Rich Night Cream",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image1_Webp.webp",
+          "recommended_alt_text": "Sanava ansiktskräm i sin förpackning"
+        },
+        {
+          "img_id": 2,
+          "alt_text": "Rich Night Cream",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/Sanava_Preview_Image2_Webp.webp",
+          "recommended_alt_text": "Återfuktande ansiktskräm från Sanava, närbild"
+        }
+      ],
+      "list_of_schema_markups": [
+        {
+          "schema_type": "BreadcrumbList"
+        }
+      ],
+      "mobile_friendly": true,
+      "page_speed": {
+        "desktop_score": null,
+        "mobile_score": null,
+        "measurement_status": "not_measured",
+        "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.",
+        "measured_proxies": {
+          "ttfb_seconds": 0.499,
+          "html_download_seconds": 0.825,
+          "html_bytes": 258574,
+          "render_blocking_head_stylesheets": 4,
+          "render_blocking_head_scripts": 2,
+          "images_on_page": 85,
+          "images_lazy_loaded": 79,
+          "images_missing_width_height": 0
+        }
+      },
+      "404_errors": false,
+      "broken_links": false,
+      "redirects": false,
+      "duplicate_content": false,
+      "structured_data_errors": false,
+      "internal_links": 13,
+      "external_links": 1,
+      "issues": [
+        "CRITICAL: page is not translated — title, H1 and og:title are all 'Face Creams' (English) on the Swedish storefront.",
+        "Title is 11 characters against a 50-65 rule and contains no target keyword.",
+        "Meta description is missing entirely; og:description and twitter:description are also absent.",
+        "H1 'Face Creams' is 11 characters, below the 20-70 rule, and contains no keyword.",
+        "No H2 headings on the page at all.",
+        "Only 242 words of content — no category copy, no buying guide, no intro paragraph.",
+        "'ansiktskräm' appears 0 times on this page and 0 times across the entire Swedish site, despite the cluster being worth 9,660 searches/month.",
+        "Only CollectionPage-level schema is BreadcrumbList; no ItemList / CollectionPage markup.",
+        "Collection URL handle is English ('face-creams') on a Swedish-language market.",
+        "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."
+      ],
+      "recommendations": [
+        "Translate the collection: title 'Ansiktskräm för torr och känslig hy | Sanava' padded to 50-65 chars.",
+        "Write a 150-160 char Swedish meta description containing 'ansiktskräm' and 'återfuktande'.",
+        "Set H1 to 'Återfuktande ansiktskräm för torr hy' (35 chars).",
+        "Add 300-500 words of category copy with H2s: 'Vad gör en bra återfuktande ansiktskräm?', 'Fuktgivande ansiktskräm för känslig hy'.",
+        "Add ItemList schema and populate og:/twitter: description from the new meta description.",
+        "Consider a Swedish URL handle (/collections/ansiktskram) with a 301 from the current handle.",
+        "This is the single highest-leverage fix in the audit: 8,100/mo head term with a page that currently says nothing."
+      ],
+      "recommended_url": null,
+      "secondary_url": null,
+      "secondary_url_note": null
+    },
+    {
+      "id": 4,
+      "keyword_cluster": "Känslig hud",
+      "search_intent": "informational / commercial",
+      "page_type": "none_content_gap",
+      "url": "",
+      "page_match_rationale": "No page on the Swedish storefront targets sensitive skin. 'känslig' appears only as an incidental mention (2-6 times) on 7 pages, always inside broader copy — no title, H1, H2 or meta description anywhere contains it.",
+      "page_status": "no_matching_page_content_gap",
+      "word_count": 0,
+      "first_100_words_paragraph": "absent",
+      "first_100_words_sample": null,
+      "keywords": [
+        {
+          "term": "känslig hud",
+          "search_volume": 590
+        },
+        {
+          "term": "hudvård för känslig hy",
+          "search_volume": 270
+        },
+        {
+          "term": "ansiktskräm för torr och känslig hy",
+          "search_volume": 200
+        },
+        {
+          "term": "ansiktskräm för känslig hud",
+          "search_volume": 180
+        }
+      ],
+      "title": null,
+      "description": null,
+      "h1": null,
+      "h2": null,
+      "og_title": null,
+      "og_description": null,
+      "twitter_title": null,
+      "twitter_description": null,
+      "all_h1_count": null,
+      "all_h2": [],
+      "og_image": false,
+      "twitter_image": false,
+      "twitter_card": null,
+      "canonical": null,
+      "canonical_self_referencing": null,
+      "hreflang_tags": null,
+      "img_alts": [],
+      "list_of_schema_markups": [],
+      "mobile_friendly": null,
+      "page_speed": null,
+      "404_errors": null,
+      "broken_links": null,
+      "redirects": null,
+      "duplicate_content": null,
+      "structured_data_errors": null,
+      "internal_links": 0,
+      "external_links": 0,
+      "issues": [
+        "Content gap: 1,240 searches/month with no matching page.",
+        "Closest existing coverage is a single product FAQ answer ('Är den säker för känslig hud?') and 2 passing mentions on /pages/intelligent-skincare.",
+        "Two of the four terms also need the word 'ansiktskräm', which does not exist anywhere on the Swedish site."
+      ],
+      "recommendations": [
+        "Create /sv-se/blogs/skincare/hudvard-for-kanslig-hy targeting 'hudvård för känslig hy' and 'känslig hud' (1,200+ words).",
+        "Create or repurpose a commercial landing page for 'ansiktskräm för känslig hy' — this term also sits in the Ansiktskräm cluster, so a single collection page can serve both.",
+        "Until then, add an H2 'Ansiktskräm för torr och känslig hy' to /sv-se/products/rich-night-cream and surface the existing sensitive-skin FAQ answer above the fold.",
+        "Add FAQPage schema on the new page for 'Vilken ansiktskräm passar känslig hy?'."
+      ],
+      "recommended_url": "https://sanavaskincare.com/sv-se/blogs/skincare/hudvard-for-kanslig-hy",
+      "closest_existing_pages": [
+        "https://sanavaskincare.com/sv-se/products/rich-night-cream",
+        "https://sanavaskincare.com/sv-se/pages/intelligent-skincare"
+      ],
+      "secondary_url": null,
+      "secondary_url_note": null
+    },
+    {
+      "id": 5,
+      "keyword_cluster": "Hudbarriär",
+      "search_intent": "informational",
+      "page_type": "blog_article",
+      "url": "https://sanavaskincare.com/sv-se/blogs/skincare/what-does-skin-barrier-support-mean",
+      "page_match_rationale": "Deepest barrier content on the site (1,817 words, 25 occurrences of 'hudbarriär'), with H1 and title both on-topic. /pages/slc-3-skin-lipid-complex is the commercial companion for the same cluster.",
+      "page_status": null,
+      "word_count": 1817,
+      "first_100_words_paragraph": "present",
+      "first_100_words_sample": "Artikel: Vad innebär det att stödja hudbarriären? Dela Föregående 25 juni 2026 Barrier Support Vad innebär det att stödja hudbarriären? Att stödja hudbarriären innebär att hjälpa hudens yttersta lager att upprätthålla de förutsättningar det behöver för att fungera väl: en balanserad fuktnivå, flexibla hudceller och en välorganiserad lipidmiljö. I praktiken är det resultatet av hur en formula är utformad, hur",
+      "keywords": [
+        {
+          "term": "skadad hudbarriär",
+          "search_volume": 320
+        },
+        {
+          "term": "barriärkräm ansikte",
+          "search_volume": 170
+        },
+        {
+          "term": "hudbarriär",
+          "search_volume": 140
+        }
+      ],
+      "title": {
+        "text": "Att stödja hudbarriären: Vad det egentligen innebär | Sanava",
+        "length": 60,
+        "keyword_in_title": true,
+        "matched_keywords": [
+          "hudbarriär"
+        ],
+        "length_in_range": true,
+        "status": "pass",
+        "title_rule": "The title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": null
+      },
+      "description": {
+        "text": "Vad barriärstöd egentligen innebär: hur hornlagret, hudens lipider, TEWL och fuktkrämens utformning samverkar för att bidra till långvarig komfort.",
+        "length": 147,
+        "keyword_in_description": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "description_rule": "The description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Vad innebär det att stödja hudbarriären? Vi går igenom hornlagret, hudens lipider, TEWL och hur en bra barriärkräm för ansiktet bidrar till långvarig komfort."
+      },
+      "h1": {
+        "text": "Vad innebär det att stödja hudbarriären?",
+        "length": 40,
+        "keyword_in_h1": true,
+        "matched_keywords": [
+          "hudbarriär"
+        ],
+        "length_in_range": true,
+        "status": "pass",
+        "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": null
+      },
+      "h2": {
+        "text": "Hudbarriären är en selektiv gräns, inte en försegling",
+        "length": 53,
+        "keyword_in_h2": true,
+        "matched_keywords": [
+          "hudbarriär"
+        ],
+        "length_in_range": true,
+        "status": "pass",
+        "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": null
+      },
+      "og_title": {
+        "text": "Vad innebär det att stödja hudbarriären?",
+        "length": 40,
+        "keyword_in_og_title": true,
+        "matched_keywords": [
+          "hudbarriär"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Så stödjer du en skadad hudbarriär – en enkel guide"
+      },
+      "og_description": {
+        "text": "Vad barriärstöd egentligen innebär: hur hornlagret, hudens lipider, TEWL och fuktkrämens utformning samverkar för att bidra till långvarig komfort.",
+        "length": 147,
+        "keyword_in_og_description": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "En skadad hudbarriär kräver rätt vård. Läs om hornlagret, lipider, TEWL och hur en barriärkräm för ansiktet kan bidra till att stärka hudbarriären över tid."
+      },
+      "twitter_title": {
+        "text": "Vad innebär det att stödja hudbarriären?",
+        "length": 40,
+        "keyword_in_twitter_title": true,
+        "matched_keywords": [
+          "hudbarriär"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Hudbarriären förklarad – vad barriärstöd egentligen betyder"
+      },
+      "twitter_description": {
+        "text": "Barriärstöd handlar om mer än återfuktning eller en enskild stjärningrediens. Lär dig hur hudens lipider, vattenförlust och fuktkrämens utformning samverkar – och vad trovärdig barriärvård faktiskt bör göra.",
+        "length": 207,
+        "keyword_in_twitter_description": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "En skadad hudbarriär märks som torrhet och stramhet. Lär dig hur hudens lipider, vattenförlust och en genomtänkt barriärkräm för ansiktet samverkar för komfort."
+      },
+      "all_h1_count": 1,
+      "all_h2": [
+        "Hudbarriären är en selektiv gräns, inte en försegling",
+        "TEWL är användbart – men förenklas ofta",
+        "En fuktkräm kan påverka hudbarriären på flera sätt",
+        "Varför ingredienslistan bara berättar en del av historien",
+        "Barriärstöd är inte samma sak som barriärreparation",
+        "Rutinen är lika viktig som fuktkrämen",
+        "Varför miljön spelar roll i Sverige och Norden",
+        "Sanavas synsätt",
+        "Bli en del av det första kapitlet",
+        "Läs mer"
+      ],
+      "og_image": true,
+      "twitter_image": true,
+      "twitter_card": "summary",
+      "canonical": "https://sanavaskincare.com/sv-se/blogs/skincare/what-does-skin-barrier-support-mean",
+      "canonical_self_referencing": true,
+      "hreflang_tags": 53,
+      "img_alts": [
+        {
+          "img_id": 1,
+          "alt_text": "What Does Skin Barrier Support Mean?",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/blog_post_what_does_skin_barrier_support_mean_470e2c32-6e02-4deb-b88c-81eaf96c84ef.jpg",
+          "recommended_alt_text": "Illustration som visar vad en skadad hudbarriär innebär"
+        },
+        {
+          "img_id": 2,
+          "alt_text": "What Makes a Good Night Cream for Dry Skin?",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "weak",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/articles/Sanava_Good_Night_Cream_Dry_Skin_Blog_Photo_V2_95cce5a1-2f64-4372-b57a-73a26a1765c1.png",
+          "recommended_alt_text": "Nattkräm som stödjer hudbarriären hos torr hud"
+        }
+      ],
+      "list_of_schema_markups": [
+        {
+          "schema_type": "Article"
+        },
+        {
+          "schema_type": "WebPage"
+        },
+        {
+          "schema_type": "BreadcrumbList"
+        },
+        {
+          "schema_type": "Organization"
+        }
+      ],
+      "mobile_friendly": true,
+      "page_speed": {
+        "desktop_score": null,
+        "mobile_score": null,
+        "measurement_status": "not_measured",
+        "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.",
+        "measured_proxies": {
+          "ttfb_seconds": 0.491,
+          "html_download_seconds": 0.862,
+          "html_bytes": 272229,
+          "render_blocking_head_stylesheets": 4,
+          "render_blocking_head_scripts": 2,
+          "images_on_page": 85,
+          "images_lazy_loaded": 78,
+          "images_missing_width_height": 0
+        }
+      },
+      "404_errors": false,
+      "broken_links": false,
+      "redirects": false,
+      "duplicate_content": false,
+      "structured_data_errors": false,
+      "internal_links": 11,
+      "external_links": 3,
+      "issues": [
+        "Neither the title, H1 nor any H2 contains 'skadad hudbarriär' (320/mo, the largest term in the cluster).",
+        "'barriärkräm' (170/mo) appears 0 times on the page and 0 times sitewide.",
+        "Meta description is 147 characters — 3 short of the 150-160 rule.",
+        "og:title (40 chars) and twitter:title differ from the SEO title and fall below the 50-65 rule.",
+        "Both content images use English alt text with no Swedish keyword.",
+        "No FAQPage schema on a page whose whole cluster is question-shaped.",
+        "Meta description says 'barriärstöd' but never 'hudbarriär' — the exact head term is missing from the snippet.",
+        "twitter:description (207 chars) diverges from og:description (147 chars).",
+        "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."
+      ],
+      "recommendations": [
+        "Add an H2 'Skadad hudbarriär: tecken och vad du kan göra' and 250-350 words under it to capture the 320/mo term.",
+        "Introduce 'barriärkräm' as a synonym in the copy and in one H2 ('Barriärkräm för ansiktet – vad den faktiskt gör').",
+        "Extend meta description to 150-160 chars.",
+        "Align og:title / twitter:title with the 60-char SEO title.",
+        "Swedish alt text on both images, e.g. 'Illustration av hudbarriären och dess lipider'.",
+        "Add FAQPage schema and cross-link to /sv-se/pages/slc-3-skin-lipid-complex with anchor 'barriärstöd'."
+      ],
+      "recommended_url": null,
+      "secondary_url": "https://sanavaskincare.com/sv-se/pages/slc-3-skin-lipid-complex",
+      "secondary_url_note": "Commercial companion page for the same cluster: title 60 chars and on-keyword, but it has NO H1 element at all."
+    },
+    {
+      "id": 6,
+      "keyword_cluster": "Hudvård",
+      "search_intent": "informational / brand",
+      "page_type": "brand_page",
+      "url": "https://sanavaskincare.com/sv-se/pages/about-sanava",
+      "page_match_rationale": "Brand page is the natural target for 'svensk hudvård' and 'svenska hudvårdsmärken' — its meta description already positions Sanava as 'ett svenskt hudvårdsvarumärke'. 'hudvård för torr hy' is better served by the Torr hud article (id 2).",
+      "page_status": null,
+      "word_count": 376,
+      "first_100_words_paragraph": "absent",
+      "first_100_words_sample": "Vår Berättelse Sanava skapades ur en enkel men genomtänkt övertygelse: att hudvård ska stödja huden på lång sikt, inte överbelasta den i stunden. I en kategori som ofta präglas av överflöd — fler steg, starkare löften, snabbare resultat — erbjuder intelligent hudvård ett mer medvetet förhållningssätt. Den respekterar hudens komplexitet samtidigt som den skapar klarhet i den dagliga rutinen. I",
+      "keywords": [
+        {
+          "term": "hudvård för torr hy",
+          "search_volume": 280
+        },
+        {
+          "term": "svensk hudvård",
+          "search_volume": 210
+        },
+        {
+          "term": "svenska hudvårdsmärken",
+          "search_volume": 140
+        }
+      ],
+      "title": {
+        "text": "Om SANAVA",
+        "length": 9,
+        "keyword_in_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "title_rule": "The title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Om Sanava – Svensk Hudvård Anpassad för Dig med Torr Hy"
+      },
+      "description": {
+        "text": "Upptäck SANAVA, ett svenskt hudvårdsvarumärke som skapar färre, bättre och mer målmedvetna formuleringar — vägledda av hudens behov, barriärstöd och långsiktig hudhälsa.",
+        "length": 169,
+        "keyword_in_description": true,
+        "matched_keywords": [
+          "svensk hudvård"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "description_rule": "The description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Sanava är ett av de svenska hudvårdsmärkena som fokuserar på färre, bättre formuleringar. Upptäck vår filosofi för hudvård för torr hy och långsiktig hudhälsa."
+      },
+      "h1": {
+        "text": null,
+        "length": 0,
+        "keyword_in_h1": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "missing",
+        "h1_rule": "The H1 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": "Svensk hudvård med fokus på hudbarriären"
+      },
+      "h2": {
+        "text": null,
+        "length": 0,
+        "keyword_in_h2": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "missing",
+        "h2_rule": "The H2 should be between 20-70 characters and include any of the keyword.",
+        "recommended_text": "Ett av de svenska hudvårdsmärkena du kan lita på"
+      },
+      "og_title": {
+        "text": "Om SANAVA",
+        "length": 9,
+        "keyword_in_og_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "og_title_rule": "The OG title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Om Sanava – Ett av de Ledande Svenska Hudvårdsmärkena"
+      },
+      "og_description": {
+        "text": "Upptäck SANAVA, ett svenskt hudvårdsvarumärke som skapar färre, bättre och mer målmedvetna formuleringar — vägledda av hudens behov, barriärstöd och långsiktig hudhälsa.",
+        "length": 169,
+        "keyword_in_og_description": true,
+        "matched_keywords": [
+          "svensk hudvård"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "og_description_rule": "The OG description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Sanava är svensk hudvård skapad för hudens verkliga behov. Läs om vår resa som ett av de svenska hudvårdsmärkena som satsar på riktig hudvård för torr hy."
+      },
+      "twitter_title": {
+        "text": "Om SANAVA",
+        "length": 9,
+        "keyword_in_twitter_title": false,
+        "matched_keywords": [],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_title_rule": "The Twitter title should be between 50-65 characters and include any of the keyword.",
+        "recommended_text": "Om Sanava – Svensk Hudvård Särskilt Skapad för Torr Hy"
+      },
+      "twitter_description": {
+        "text": "Upptäck SANAVA, ett svenskt hudvårdsvarumärke som skapar färre, bättre och mer målmedvetna formuleringar — vägledda av hudens behov, barriärstöd och långsiktig hudhälsa.",
+        "length": 169,
+        "keyword_in_twitter_description": true,
+        "matched_keywords": [
+          "svensk hudvård"
+        ],
+        "length_in_range": false,
+        "status": "fail",
+        "twitter_description_rule": "The Twitter description should be between 150-160 characters and include any of the keyword.",
+        "recommended_text": "Lär känna Sanava, ett svenskt hudvårdsmärke som utvecklar färre, bättre formuleringar inom hudvård för torr hy, med fokus på barriärstöd och hudhälsa."
+      },
+      "all_h1_count": 0,
+      "all_h2": [],
+      "og_image": true,
+      "twitter_image": true,
+      "twitter_card": "summary",
+      "canonical": "https://sanavaskincare.com/sv-se/pages/about-sanava",
+      "canonical_self_referencing": true,
+      "hreflang_tags": 53,
+      "img_alts": [
+        {
+          "img_id": 1,
+          "alt_text": "",
+          "keyword_in_alt_text": false,
+          "alt_text_rule": "The alt text should be less than 100 characters and preferably include any of the keyword.",
+          "status": "missing",
+          "img_url": "https://sanavaskincare.com//sanavaskincare.com/cdn/shop/files/brandstory_image1_desktop.png",
+          "recommended_alt_text": "Sanavas grundare berättar om svensk hudvård för torr hy"
+        }
+      ],
+      "list_of_schema_markups": [
+        {
+          "schema_type": "BreadcrumbList"
+        }
+      ],
+      "mobile_friendly": true,
+      "page_speed": {
+        "desktop_score": null,
+        "mobile_score": null,
+        "measurement_status": "not_measured",
+        "note": "Google PageSpeed Insights API returned quota-exceeded without an API key; Lighthouse scores could not be collected. Server-side proxies measured directly are below.",
+        "measured_proxies": {
+          "ttfb_seconds": 0.414,
+          "html_download_seconds": 0.584,
+          "html_bytes": 237053,
+          "render_blocking_head_stylesheets": 4,
+          "render_blocking_head_scripts": 2,
+          "images_on_page": 84,
+          "images_lazy_loaded": 78,
+          "images_missing_width_height": 0
+        }
+      },
+      "404_errors": false,
+      "broken_links": false,
+      "redirects": false,
+      "duplicate_content": false,
+      "structured_data_errors": false,
+      "internal_links": 9,
+      "external_links": 1,
+      "issues": [
+        "Page has NO H1 element — this is true of all 7 /pages/ templates on the site (about-sanava, our-philosophy, founder-story, contact, founders-circle, intelligent-skincare, slc-3-skin-lipid-complex).",
+        "Page has no H2 headings either — there is no heading structure at all.",
+        "Title 'Om SANAVA' is 9 characters against a 50-65 rule and contains no keyword.",
+        "og:title and twitter:title inherit the same 9-character value.",
+        "Meta description is 169 characters, 9 over the rule.",
+        "Only 376 words of content.",
+        "The one content image on the page (brandstory_image1_desktop.png) has empty alt text.",
+        "No Organization schema on the brand page itself (it exists only on the homepage), and no BreadcrumbList beyond the default.",
+        "twitter:card is 'summary' although a large og:image exists — should be 'summary_large_image'."
+      ],
+      "recommendations": [
+        "Add H1 'Svensk hudvård byggd på hudens behov' (35 chars) — and fix the missing-H1 template bug across all /pages/.",
+        "Rewrite title to 'Om Sanava | Svensk hudvård för långsiktig hudhälsa' (50 chars).",
+        "Add H2s: 'Svenska hudvårdsmärken med ett annat synsätt', 'Hudvård för torr hy'.",
+        "Trim meta description to 150-160 chars and mirror it into og:/twitter: description.",
+        "Expand to 800+ words with founder, formulation and sourcing detail to support the brand queries.",
+        "Add Organization schema (with sameAs to Instagram) on this page.",
+        "Add Swedish alt text to the brand-story image."
+      ],
+      "recommended_url": null,
+      "secondary_url": null,
+      "secondary_url_note": null
+    }
+  ]
+}
